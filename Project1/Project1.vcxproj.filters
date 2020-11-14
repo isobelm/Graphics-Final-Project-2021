@@ -42,6 +42,9 @@
     <ClInclude Include="insect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="monkeyhead_smooth.dae" />

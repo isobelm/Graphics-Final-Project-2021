@@ -136,6 +136,7 @@
     <ClInclude Include="insect.h" />
     <ClInclude Include="maths_funcs.h" />
     <ClInclude Include="mesh.h" />
+    <ClInclude Include="model.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="monkeyhead_smooth.dae" />

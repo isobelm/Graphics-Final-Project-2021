@@ -11,6 +11,8 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
+#include <glm/mat4x4.hpp>
+
 // Assimp includes
 #include <assimp/cimport.h> // scene importer
 #include <assimp/scene.h> // collects data

@@ -46,20 +46,20 @@ void Insect::generateObjectBufferMesh(GLuint shaderProgramID) {
 }
 
 void Insect::draw(mat4 parent, GLuint matrix_location) {
-	body.draw();
-	mat4 headMat = identity_mat4();
+	body.draw(parent, matrix_location);
+	mat4 headMat = identity_mat4();/*
 	headMat = rotate_z_deg(headMat, rotate);
 	headMat = translate(headMat, vec3(0.0f, 0.0f, 0.0f));
 	headMat = parent * headMat;
-	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, headMat.m);
-	head.draw();
+	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, headMat.m);*/
+	head.draw(parent, matrix_location);
 
-	mat4 legsMat = identity_mat4();
+	/*mat4 legsMat = identity_mat4();
 	legsMat = rotate_z_deg(legsMat, -rotate);
 	legsMat = translate(legsMat, vec3(0.0f, 0.0f, 0.0f));
-	legsMat = parent * legsMat;
-	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, legsMat.m);
-	legs.draw();
+	legsMat = parent * legsMat;*/
+	//glUniformMatrix4fv(matrix_location, 1, GL_FALSE, legsMat.m);
+	legs.draw(parent, matrix_location);
 }
 
 void Insect::update() {

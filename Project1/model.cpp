@@ -11,6 +11,8 @@
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
+#include <glm/gtc/type_ptr.hpp>
+
 // Assimp includes
 #include <assimp/cimport.h> // scene importer
 #include <assimp/scene.h> // collects data
@@ -37,8 +39,8 @@ Model::Model(const char* file_name) {
 		aiProcess_CalcTangentSpace |
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
-		aiProcess_SortByPType |
-		aiProcess_PreTransformVertices
+		aiProcess_SortByPType 
+		//aiProcess_PreTransformVertices
 	);
 
 	if (!scene) {
@@ -56,22 +58,14 @@ Model::Model(const char* file_name) {
 			printf(mesh->mName.C_Str());
 			printf("\n");
 			printf("    %i vertices in mesh\n", mesh->mNumVertices);
-
-			meshes.push_back(Mesh(mesh));
+			aiMatrix4x4 aiTransform = scene->mRootNode->mChildren[m_i]->mTransformation;
+			mat4 transformation = mat4(aiTransform.a1, aiTransform.a2, aiTransform.a3, aiTransform.a4,
+				aiTransform.b1, aiTransform.b2, aiTransform.b3, aiTransform.b4,
+				aiTransform.c1, aiTransform.c2, aiTransform.c3, aiTransform.c4,
+				aiTransform.d1, aiTransform.d2, aiTransform.d3, aiTransform.d4);
+			meshes.push_back(Mesh(mesh, transformation));
 
 		}
-		/*for (unsigned int m_i = 0; m_i < scene->mRootNode->mNumChildren; m_i++) {
-			const aiMesh* mesh = scene->mMeshes[m_i];
-			const aiNode* node = scene->mRootNode->mChildren[m_i];
-			printf(mesh->mName.C_Str());
-			printf("\n");
-			printf("  %i node children\n", node->mNumChildren);
-
-			printf("    %i vertices in mesh\n", mesh->mNumVertices);
-
-			meshes.push_back(Mesh(mesh));
-
-		}*/
 	}
 
 	printf("  %i meshes\n", meshes.size());
@@ -85,9 +79,9 @@ void Model::generateObjectBufferMesh(GLuint shaderProgramID) {
 	}
 };
 
-void Model::draw() {
+void Model::draw(mat4 parentTransform, GLuint matrix_location) {
 	for (unsigned int i = 0; i < meshes.size(); i++) {
-		meshes[i].draw();
+		meshes[i].draw(parentTransform, matrix_location);
 	}
 };
 

@@ -13,11 +13,12 @@ private:
 	std::vector<vec2> mTextureCoords;
 	GLuint loc1, loc2, loc3;
 	GLuint vp_vbo, vn_vbo, vao, ebo;
+	mat4 transformationMat;
 
 public:
 	Mesh();
-	Mesh(const aiMesh* mesh);
-	void draw();
+	Mesh(const aiMesh* mesh, mat4 transformation);
+	void draw(mat4 parentTransform, GLuint matrix_location);
 	void generateObjectBufferMesh(GLuint shaderProgramID);
 };
 
