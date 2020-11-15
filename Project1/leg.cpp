@@ -37,16 +37,18 @@ void Leg::draw(mat4 parentTransform, GLuint matrix_location) {
 	mat4 rotation = identity_mat4();
 	//hipTransform = inverse(upperLeg.meshes[0].transformationMat) * hipTransform;
 	hipTransform = translate(hipTransform, vec3(hip_transform_x, 0.0f, hip_transform_z));
-	hipTransform = rotate_y_deg(hipTransform, cyclePos);
+	hipTransform = rotate_y_deg(hipTransform, cyclePos * rotate_dir);
 	hipTransform = translate(hipTransform, vec3(-hip_transform_x, 0.0f, -hip_transform_z));
 
-	kneeTransform = translate(hipTransform, vec3(hip_transform_x * 2, 0.0f, hip_transform_z * 2));
-	kneeTransform = rotate_y_deg(hipTransform, cyclePos);
-	kneeTransform = translate(hipTransform, vec3(hip_transform_x * 2, 0.0f, hip_transform_z * 2));
+	kneeTransform = translate(kneeTransform, vec3(hip_transform_x, 0.0f, hip_transform_z));
+	kneeTransform = translate(kneeTransform, vec3(knee_transform_x, 0.0f, knee_transform_z));
+	kneeTransform = rotate_y_deg(kneeTransform, cyclePos * rotate_dir);
+	kneeTransform = translate(kneeTransform, vec3(-knee_transform_x, 0.0f, -knee_transform_z));
+	kneeTransform = translate(kneeTransform, vec3(-hip_transform_x, 0.0f, -hip_transform_z));
 
 	//hipTransform = hipTransform * upperLeg.meshes[0].transformationMat;
 	upperLeg.draw(parentTransform, hipTransform, matrix_location);
-	lowerLeg.draw(parentTransform, hipTransform, matrix_location);
+	lowerLeg.draw(parentTransform, kneeTransform, matrix_location);
 };
 
 void Leg::update() {
@@ -54,22 +56,28 @@ void Leg::update() {
 	if (cyclePos > 50 || cyclePos < 0) motion =  -motion;
 }
 
+void Leg::switchSide() {
+	knee_transform_x = -knee_transform_x;
+	hip_transform_x = -hip_transform_x;
+	rotate_dir = -rotate_dir;
+}
+
 void Leg::keypress(unsigned char key, int x, int y) {
-	/*switch (key) {
+	switch (key) {
 	case 'x':
-		hip_transform_x += 0.05f;
+		knee_transform_x += 0.05f;
 		break;
 	case 'z':
-		hip_transform_x -= 0.05f;
+		knee_transform_x -= 0.05f;
 		break;
 	case 'c':
-		hip_transform_y += 0.05f;
+		knee_transform_z += 0.05f;
 		break;
 	case 'v':
-		hip_transform_y -= 0.05f;
+		knee_transform_z -= 0.05f;
 		break;
-	}*/
+	}
 
-	//printf("x:\t%f\n", hip_transform_x);
-	//printf("y:\t%f\n", hip_transform_y);
+	printf("x:\t%f\n", knee_transform_x);
+	printf("y:\t%f\n", knee_transform_z);
 }

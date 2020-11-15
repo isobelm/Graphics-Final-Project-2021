@@ -27,7 +27,7 @@ public:
 private:
 	Model head;
 	Model body;
-	Model legs[6];
+	Leg legs[6];
 	Leg leg;
 	GLfloat rotate = 0;
 };

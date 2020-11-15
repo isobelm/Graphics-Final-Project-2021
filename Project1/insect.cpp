@@ -34,10 +34,18 @@ Insect::Insect(const char* file_name) {
 	//std::vector<Mesh>  headMesh{ tmp.meshes[2],tmp.meshes[3], tmp.meshes[4] };
 	head = Model(std::vector<Mesh>{tmp[18], tmp[19], tmp[20]});
 	//head.setMeshes(headMesh);
-	body = Model(std::vector<Mesh>{tmp[2], tmp[5], tmp[7], tmp[11], tmp[15], tmp[13]});
+	body = Model(std::vector<Mesh>{tmp[2], tmp[5], tmp[7], tmp[11], tmp[15], tmp[13], tmp[21]});
 	//body.setMeshes(bodyMesh);
 	//legs.setMeshes(legsMesh);
-	leg = Leg(tmp[17], tmp[16]);
+	legs[0] = Leg(tmp[1], tmp[0]);
+	legs[1] = Leg(tmp[4], tmp[3]); 
+	legs[2] = Leg(tmp[6], tmp[8]);
+	legs[3] = Leg(tmp[10], tmp[9]);
+	legs[4] = Leg(tmp[14], tmp[12]);
+	legs[5] = Leg(tmp[17], tmp[16]);
+	legs[0].switchSide();
+	legs[3].switchSide();
+	legs[4].switchSide();
 }
 
 /*
@@ -68,7 +76,10 @@ void Insect::generateObjectBufferMesh(GLuint shaderProgramID) {
 	head.generateObjectBufferMesh(shaderProgramID);
 	body.generateObjectBufferMesh(shaderProgramID);
 	//legs.generateObjectBufferMesh(shaderProgramID);
-	leg.generateObjectBufferMesh(shaderProgramID);
+	//leg.generateObjectBufferMesh(shaderProgramID);
+	for (int i = 0; i < 6; i++) {
+		legs[i].generateObjectBufferMesh(shaderProgramID);
+	}
 }
 
 void Insect::draw(mat4 parent, GLuint matrix_location) {
@@ -78,7 +89,7 @@ void Insect::draw(mat4 parent, GLuint matrix_location) {
 	headMat = translate(headMat, vec3(0.0f, 0.0f, 0.0f));
 	headMat = parent * headMat;
 	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, headMat.m);*/
-	//head.draw(parent, matrix_location);
+	head.draw(parent, identity_mat4(), matrix_location);
 
 	/*mat4 legsMat = identity_mat4();
 	legsMat = rotate_z_deg(legsMat, -rotate);
@@ -86,12 +97,18 @@ void Insect::draw(mat4 parent, GLuint matrix_location) {
 	legsMat = parent * legsMat;*/
 	//glUniformMatrix4fv(matrix_location, 1, GL_FALSE, legsMat.m);
 	//legs.draw(parent, matrix_location);
-	leg.draw(parent, matrix_location);
+	for (int i = 0; i < 6; i++) {
+		legs[i].draw(parent, matrix_location);
+	}
+	//leg.draw(parent, matrix_location);
 }
 
 void Insect::update() {
 	rotate += 0.1f;
-	leg.update();
+	//leg.update();
+	for (int i = 0; i < 6; i++) {
+		legs[i].update();
+	}
 }
 
 void Insect::keypress(unsigned char key, int x, int y) {

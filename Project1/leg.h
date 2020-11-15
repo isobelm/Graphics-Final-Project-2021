@@ -21,7 +21,9 @@ public:
 
 	void keypress(unsigned char key, int x, int y);
 
-	GLfloat motion = 0.5f;
+	GLfloat motion = 0.1f;
+
+	void switchSide();
 
 private:
 	Mesh upperLeg;
@@ -29,6 +31,9 @@ private:
 	GLfloat cyclePos = 0;
 	GLfloat hip_transform_x = -0.1f;
 	GLfloat hip_transform_z = 0.45f;
+	GLfloat knee_transform_x = 0.7f;
+	GLfloat knee_transform_z = -0.1f;
+	int rotate_dir = 1;
 };
 
 #endif // !LEG_H
