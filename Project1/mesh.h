@@ -1,7 +1,14 @@
 //#pragma once
 #ifndef MESH_H
 #define MESH_H
+#include "mesh.h"
+#include "assimp/scene.h"
 
+#include <vector> // STL dynamic memory.
+
+// OpenGL includes
+#include <GL/glew.h>
+#include <GL/freeglut.h>
 
 class Mesh
 {
@@ -13,12 +20,13 @@ private:
 	std::vector<vec2> mTextureCoords;
 	GLuint loc1, loc2, loc3;
 	GLuint vp_vbo, vn_vbo, vao, ebo;
-	mat4 transformationMat;
 
 public:
+	mat4 transformationMat;
+	const char* name;
 	Mesh();
-	Mesh(const aiMesh* mesh, mat4 transformation);
-	void draw(mat4 parentTransform, GLuint matrix_location);
+	Mesh(const aiMesh* mesh, mat4 transformation, const char* name);
+	void draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_location);
 	void generateObjectBufferMesh(GLuint shaderProgramID);
 };
 

@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="leg.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="maths_funcs.cpp" />
     <ClCompile Include="mesh.cpp" />
@@ -134,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="insect.h" />
+    <ClInclude Include="leg.h" />
     <ClInclude Include="maths_funcs.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="model.h" />

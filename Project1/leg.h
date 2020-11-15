@@ -1,20 +1,17 @@
-//#pragma once
-#ifndef INSECT_H
-#define INSECT_H
-#define INSECT_MESH "insect.dae"
+#ifndef LEG_H
+#define LEG_H
+
 #include "model.h"
-#include "leg.h"
 
 // OpenGL includes
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
-class Insect {
+class Leg {
 public:
 
-	Insect();
-
-	Insect(const char* file_name);
+	Leg(Mesh upprLeg, Mesh lwrLeg);
+	Leg();
 
 	void generateObjectBufferMesh(GLuint shaderProgramID);
 
@@ -24,12 +21,14 @@ public:
 
 	void keypress(unsigned char key, int x, int y);
 
+	GLfloat motion = 0.5f;
+
 private:
-	Model head;
-	Model body;
-	Model legs[6];
-	Leg leg;
-	GLfloat rotate = 0;
+	Mesh upperLeg;
+	Mesh lowerLeg;
+	GLfloat cyclePos = 0;
+	GLfloat hip_transform_x = -0.1f;
+	GLfloat hip_transform_z = 0.45f;
 };
 
-#endif
+#endif // !LEG_H

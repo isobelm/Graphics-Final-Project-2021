@@ -27,7 +27,12 @@
 
 Model::Model() {};
 
-Model::Model(const char* file_name) {
+Model::Model(std::vector<Mesh> meshesVec) {
+	meshes = meshesVec;
+};
+
+std::vector<Mesh> Model::loadScene(const char* file_name) {
+	std::vector<Mesh> meshes;
 
 	/* Use assimp to read the model file, forcing it to be read as    */
 	/* triangles. The second flag (aiProcess_PreTransformVertices) is */
@@ -35,12 +40,11 @@ Model::Model(const char* file_name) {
 	/* are offset from the origin. This is pre-transform them so      */
 	/* they're in the right position.                                 */
 	const aiScene* scene = aiImportFile(
-		file_name, 
+		file_name,
 		aiProcess_CalcTangentSpace |
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
-		aiProcess_SortByPType 
-		//aiProcess_PreTransformVertices
+		aiProcess_SortByPType
 	);
 
 	if (!scene) {
@@ -63,14 +67,16 @@ Model::Model(const char* file_name) {
 				aiTransform.b1, aiTransform.b2, aiTransform.b3, aiTransform.b4,
 				aiTransform.c1, aiTransform.c2, aiTransform.c3, aiTransform.c4,
 				aiTransform.d1, aiTransform.d2, aiTransform.d3, aiTransform.d4);
-			meshes.push_back(Mesh(mesh, transformation));
-
+			meshes.push_back(Mesh(mesh, transformation, scene->mRootNode->mChildren[m_i]->mName.C_Str()));
+			
 		}
 	}
 
 	printf("  %i meshes\n", meshes.size());
 
 	aiReleaseImport(scene);
+
+	return meshes;
 };
 
 void Model::generateObjectBufferMesh(GLuint shaderProgramID) {
@@ -79,9 +85,9 @@ void Model::generateObjectBufferMesh(GLuint shaderProgramID) {
 	}
 };
 
-void Model::draw(mat4 parentTransform, GLuint matrix_location) {
+void Model::draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_location) {
 	for (unsigned int i = 0; i < meshes.size(); i++) {
-		meshes[i].draw(parentTransform, matrix_location);
+		meshes[i].draw(parentTransform, childTransform, matrix_location);
 	}
 };
 

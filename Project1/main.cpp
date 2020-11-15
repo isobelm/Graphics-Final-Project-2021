@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+
 // Windows includes (For Time, IO, etc.)
 #include <windows.h>
 #include <mmsystem.h>
@@ -10,8 +12,6 @@
 // OpenGL includes
 #include <GL/glew.h>
 #include <GL/freeglut.h>
-
-#include <glm/mat4x4.hpp>
 
 // Assimp includes
 #include <assimp/cimport.h> // scene importer
@@ -37,6 +37,7 @@ int height = 600;
 
 GLfloat rotate_y = 0.0f;
 GLfloat TranslateX = 0.0f, TranslateY = 0.0f, TranslateZ = 0.0f;
+GLfloat RotateX = 0.0f;
 
 
 
@@ -166,7 +167,9 @@ void display() {
 	mat4 persp_proj = perspective(45.0f, (float)width / (float)height, 0.1f, 1000.0f);
 	mat4 model = identity_mat4();
 	model = translate(model, vec3(1.0f, 0.0f, 0.0f));
-	model = rotate_z_deg(model, rotate_y);
+	//model = rotate_z_deg(model, rotate_y);
+	view = rotate_z_deg(view, RotateX);
+	view = rotate_x_deg(view, -70.0f);
 	view = translate(view, vec3(TranslateX, TranslateY, TranslateZ -10.0f));
 
 	// update uniforms & draw
@@ -211,12 +214,13 @@ void init()
 
 // Placeholder code for the keypress
 void keypress(unsigned char key, int x, int y) {
+	insect.keypress(key, x, y);
 	switch(key) {
 	case 'd':
-		TranslateX += 0.1f;
+		RotateX += 5.0f;
 		break;
 	case 'a':
-		TranslateX -= 0.1f;
+		RotateX -= 5.0f;
 		break;
 	case 'w':
 		TranslateY += 0.1f;

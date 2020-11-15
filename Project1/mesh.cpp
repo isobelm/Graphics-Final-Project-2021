@@ -23,10 +23,11 @@
 
 Mesh::Mesh() {};
 
-Mesh::Mesh(const aiMesh* mesh, mat4 transformation) {
+Mesh::Mesh(const aiMesh* mesh, mat4 transformation, const char* aiName) {
 	printf("    %i vertices in mesh\n", mesh->mNumVertices);
 	mPointCount += mesh->mNumVertices;
 	transformationMat = transformation;
+	name = aiName;
 	for (unsigned int v_i = 0; v_i < mesh->mNumVertices; v_i++) {
 		if (mesh->HasPositions()) {
 			const aiVector3D* vp = &(mesh->mVertices[v_i]);
@@ -62,7 +63,7 @@ Mesh::Mesh(const aiMesh* mesh, mat4 transformation) {
 
 };
 
-void Mesh::draw(mat4 parentTransform, GLuint matrix_location) {
+void Mesh::draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_location) {
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vp_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vn_vbo);
@@ -70,7 +71,7 @@ void Mesh::draw(mat4 parentTransform, GLuint matrix_location) {
 
 	//headMat = rotate_z_deg(headMat, rotate);
 	//headMat = translate(headMat, vec3(0.0f, 0.0f, 0.0f));
-	mat4 transform = parentTransform * transformationMat;
+	mat4 transform = parentTransform * transformationMat * childTransform;
 	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, transform.m);
 
 	//glDrawElements(GL_TRIANGLES, mIndices.size(), GL_UNSIGNED_INT, &mIndices);
@@ -128,5 +129,3 @@ void Mesh::generateObjectBufferMesh(GLuint shaderProgramID) {
 	//glBindBuffer (GL_ARRAY_BUFFER, vt_vbo);
 	//glVertexAttribPointer (loc3, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 }
-//#pragma endregion VBO_FUNCTIONS
-//};

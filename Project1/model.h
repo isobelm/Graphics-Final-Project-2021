@@ -4,21 +4,29 @@
 #include "mesh.h"
 #include "assimp/scene.h"
 
+#include <vector> // STL dynamic memory.
+
+// OpenGL includes
+#include <GL/glew.h>
+#include <GL/freeglut.h>
+
+
 class Model {
 public:
 	std::vector<Mesh> meshes;
 
 	Model();
 
-	Model(const char* file_name);
+	Model(std::vector<Mesh> meshesVec);
+	//Model(const char* file_name);
 
 	void generateObjectBufferMesh(GLuint shaderProgramID);
 
-	void draw(mat4 parentTransform, GLuint matrix_location);
+	void draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_location);
 
 	void setMeshes(std::vector<Mesh> meshes);
 
-	//static aiNode loadScene(const char* file_name);
+	static std::vector<Mesh> loadScene(const char* file_name);
 
 };
 
