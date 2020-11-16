@@ -21,18 +21,22 @@ public:
 
 	void keypress(unsigned char key, int x, int y);
 
-	GLfloat motion = 0.1f;
-
+	void alternateMotion();
+		
 	void switchSide();
 
 private:
 	Mesh upperLeg;
 	Mesh lowerLeg;
-	GLfloat cyclePos = 0;
+	GLfloat motion_y = 0.2f;
+	GLfloat motion_x = 0.2f;
+	GLfloat cycleLength = 25.0f;
+	GLfloat cyclePos_x = -cycleLength;
+	GLfloat cyclePos_y = 0;
 	GLfloat hip_transform_x = -0.1f;
 	GLfloat hip_transform_z = 0.45f;
-	GLfloat knee_transform_x = 0.7f;
-	GLfloat knee_transform_z = -0.1f;
+	GLfloat knee_transform_x = 0.9f;
+	GLfloat knee_transform_z = -0.0075f;
 	int rotate_dir = 1;
 };
 

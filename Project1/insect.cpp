@@ -46,6 +46,10 @@ Insect::Insect(const char* file_name) {
 	legs[0].switchSide();
 	legs[3].switchSide();
 	legs[4].switchSide();
+
+	legs[0].alternateMotion();
+	legs[4].alternateMotion();
+	legs[2].alternateMotion();
 }
 
 /*

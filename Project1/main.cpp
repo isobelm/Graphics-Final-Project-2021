@@ -167,7 +167,7 @@ void display() {
 	mat4 persp_proj = perspective(45.0f, (float)width / (float)height, 0.1f, 1000.0f);
 	mat4 model = identity_mat4();
 	model = translate(model, vec3(1.0f, 0.0f, 0.0f));
-	//model = rotate_z_deg(model, rotate_y);
+	model = rotate_z_deg(model, -rotate_y);
 	view = rotate_z_deg(view, RotateX);
 	view = rotate_x_deg(view, -70.0f);
 	view = translate(view, vec3(TranslateX, TranslateY, TranslateZ -10.0f));
