@@ -31,13 +31,14 @@ using namespace std;
 GLuint shaderProgramID;
 
 Insect insect = Insect();
+Model ground;
 unsigned int mesh_vao = 0;
 int width = 800;
 int height = 600;
 
 GLfloat rotate_y = 0.0f;
 GLfloat TranslateX = 0.0f, TranslateY = 0.0f, TranslateZ = 0.0f;
-GLfloat RotateX = 0.0f;
+GLfloat rotate_view_x = -70.0f, rotate_view_z = 0.0f;
 
 
 
@@ -166,17 +167,23 @@ void display() {
 	mat4 view = identity_mat4();
 	mat4 persp_proj = perspective(45.0f, (float)width / (float)height, 0.1f, 1000.0f);
 	mat4 model = identity_mat4();
-	model = translate(model, vec3(1.0f, 0.0f, 0.0f));
+	mat4 groundTransformation = identity_mat4();
+	model = translate(model, vec3(3.0f, 0.0f, 0.7f));
 	model = rotate_z_deg(model, -rotate_y);
-	view = rotate_z_deg(view, RotateX);
-	view = rotate_x_deg(view, -70.0f);
-	view = translate(view, vec3(TranslateX, TranslateY, TranslateZ -10.0f));
+
+	groundTransformation = scale(groundTransformation, vec3(100, 100, 100));
+
+	view = translate(view, vec3(0, 0, -1));
+	view = rotate_z_deg(view, rotate_view_z);
+	view = rotate_x_deg(view, rotate_view_x);
+	view = translate(view, vec3(0, 0, TranslateZ -10.0f));
 
 	// update uniforms & draw
 	glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, persp_proj.m);
 	glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, view.m);
 	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, model.m);
 	insect.draw(model, matrix_location);
+	ground.draw(groundTransformation, identity_mat4(), matrix_location);
 
 	glutSwapBuffers();
 }
@@ -207,8 +214,9 @@ void init()
 	// Set up the shaders
 	GLuint shaderProgramID = CompileShaders();
 	insect = Insect(MESH_NAME);
-
+	ground = Model(Model::loadScene("ground.dae"));
 	insect.generateObjectBufferMesh(shaderProgramID);
+	ground.generateObjectBufferMesh(shaderProgramID);
 
 }
 
@@ -217,22 +225,22 @@ void keypress(unsigned char key, int x, int y) {
 	insect.keypress(key, x, y);
 	switch(key) {
 	case 'd':
-		RotateX += 5.0f;
+		rotate_view_z += 5.0f;
 		break;
 	case 'a':
-		RotateX -= 5.0f;
+		rotate_view_z -= 5.0f;
 		break;
 	case 'w':
-		TranslateY += 0.1f;
+		rotate_view_x += 5.0f;
 		break;
 	case 's':
-		TranslateY -= 0.1f;
+		rotate_view_x -= 5.0f;
 		break;
 	case 'e':
-		TranslateZ += 0.1f;
+		TranslateZ += 1.0f;
 		break;
 	case 'q':
-		TranslateZ -= 0.1f;
+		TranslateZ -= 1.0f;
 		break;
 		//Translate the base, etc.
 	}
