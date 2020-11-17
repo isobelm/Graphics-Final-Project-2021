@@ -12,6 +12,7 @@
 // OpenGL includes
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <glm/trigonometric.hpp>
 
 // Assimp includes
 #include <assimp/cimport.h> // scene importer
@@ -37,8 +38,8 @@ int width = 800;
 int height = 600;
 
 GLfloat rotate_y = 0.0f;
-GLfloat TranslateX = 0.0f, TranslateY = 0.0f, TranslateZ = 0.0f;
 GLfloat rotate_view_x = -70.0f, rotate_view_z = 0.0f;
+GLfloat view_x = 0.0f, view_y = 15.0f;
 
 
 
@@ -173,10 +174,9 @@ void display() {
 
 	groundTransformation = scale(groundTransformation, vec3(100, 100, 100));
 
-	view = translate(view, vec3(0, 0, -1));
+	view = translate(view, vec3(view_x, view_y, -5));
 	view = rotate_z_deg(view, rotate_view_z);
 	view = rotate_x_deg(view, rotate_view_x);
-	view = translate(view, vec3(0, 0, TranslateZ -10.0f));
 
 	// update uniforms & draw
 	glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, persp_proj.m);
@@ -223,24 +223,26 @@ void init()
 // Placeholder code for the keypress
 void keypress(unsigned char key, int x, int y) {
 	insect.keypress(key, x, y);
-	switch(key) {
+	switch (key) {
 	case 'd':
 		rotate_view_z += 5.0f;
 		break;
 	case 'a':
 		rotate_view_z -= 5.0f;
 		break;
-	case 'w':
+	case 'e':
 		rotate_view_x += 5.0f;
 		break;
-	case 's':
+	case 'q':
 		rotate_view_x -= 5.0f;
 		break;
-	case 'e':
-		TranslateZ += 1.0f;
+	case 'w':
+		view_x -= sin(glm::radians(rotate_view_z)) * 0.3;
+		view_y -= cos(glm::radians(rotate_view_z)) * 0.3;
 		break;
-	case 'q':
-		TranslateZ -= 1.0f;
+	case 's':
+		view_x += sin(glm::radians(rotate_view_z)) * 0.3;
+		view_y += cos(glm::radians(rotate_view_z)) * 0.3;
 		break;
 		//Translate the base, etc.
 	}
