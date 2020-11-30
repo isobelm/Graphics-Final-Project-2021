@@ -20,7 +20,7 @@ public:
 
 	void draw(mat4 parent, GLuint matrix_location);
 
-	void update();
+	void update(float delta);
 
 	void keypress(unsigned char key, int x, int y);
 

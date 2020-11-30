@@ -51,14 +51,17 @@ void Leg::draw(mat4 parentTransform, GLuint matrix_location) {
 	lowerLeg.draw(parentTransform, kneeTransform, matrix_location);
 };
 
-void Leg::update() {
-	cyclePos_y += motion_y;
+void Leg::update(float delta) {
+	cyclePos_y += motion_y * delta * 50;
+	//printf("%.2f\n", cyclePos_y);
 	if (cyclePos_y >= cycleLength || cyclePos_y <= -cycleLength) {
 		motion_y = -motion_y;
 		//printf("y:\t%f\n", cyclePos_y);
 		//printf("x:\t%f\n", cyclePos_x);
 	}
-	cyclePos_x += motion_x;
+	cyclePos_x += motion_x * delta * 50;
+	//printf("%.2f\n", cyclePos_x);
+
 	if (cyclePos_x >= cycleLength || cyclePos_x <= -cycleLength) {
 		motion_x = -motion_x;
 		//printf("y:\t%f\n", cyclePos_y);

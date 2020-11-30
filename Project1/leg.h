@@ -17,7 +17,7 @@ public:
 
 	void draw(mat4 parent, GLuint matrix_location);
 
-	void update();
+	void update(float delta);
 
 	void keypress(unsigned char key, int x, int y);
 
@@ -28,8 +28,8 @@ public:
 private:
 	Mesh upperLeg;
 	Mesh lowerLeg;
-	GLfloat motion_y = 0.2f;
-	GLfloat motion_x = 0.2f;
+	GLfloat motion_y = 0.4f;
+	GLfloat motion_x = 0.4f;
 	GLfloat cycleLength = 25.0f;
 	GLfloat cyclePos_x = -cycleLength;
 	GLfloat cyclePos_y = 0;

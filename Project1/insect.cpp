@@ -107,11 +107,11 @@ void Insect::draw(mat4 parent, GLuint matrix_location) {
 	//leg.draw(parent, matrix_location);
 }
 
-void Insect::update() {
-	rotate += 0.1f;
+void Insect::update(float delta) {
+	rotate += 0.1f * delta * 50;
 	//leg.update();
 	for (int i = 0; i < 6; i++) {
-		legs[i].update();
+		legs[i].update(delta);
 	}
 }
 

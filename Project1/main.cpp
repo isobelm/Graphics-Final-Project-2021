@@ -32,7 +32,7 @@ using namespace std;
 GLuint shaderProgramID;
 
 Insect insect = Insect();
-Model ground;
+Model ground, door, lantern;
 unsigned int mesh_vao = 0;
 int width = 800;
 int height = 600;
@@ -169,12 +169,16 @@ void display() {
 	mat4 persp_proj = perspective(45.0f, (float)width / (float)height, 0.1f, 1000.0f);
 	mat4 model = identity_mat4();
 	mat4 groundTransformation = identity_mat4();
+	mat4 doorTransformation = identity_mat4();
+	mat4 lanternTransformation = identity_mat4();
 	model = translate(model, vec3(3.0f, 0.0f, 0.7f));
 	model = rotate_z_deg(model, -rotate_y);
 
 	groundTransformation = scale(groundTransformation, vec3(100, 100, 100));
+	doorTransformation = scale(doorTransformation, vec3(3, 3, 3));
 
 	view = translate(view, vec3(view_x, view_y, -5));
+	lanternTransformation = translate(lanternTransformation, vec3(view_x - 0.5, view_y - 0.5, -5 - 0.5));
 	view = rotate_z_deg(view, rotate_view_z);
 	view = rotate_x_deg(view, rotate_view_x);
 
@@ -183,7 +187,9 @@ void display() {
 	glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, view.m);
 	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, model.m);
 	insect.draw(model, matrix_location);
-	ground.draw(groundTransformation, identity_mat4(), matrix_location);
+	//ground.draw(groundTransformation, identity_mat4(), matrix_location);
+	door.draw(doorTransformation, identity_mat4(), matrix_location);
+	lantern.draw(lanternTransformation, identity_mat4(), matrix_location);
 
 	glutSwapBuffers();
 }
@@ -197,12 +203,13 @@ void updateScene() {
 		last_time = curr_time;
 	float delta = (curr_time - last_time) * 0.001f;
 	last_time = curr_time;
+	printf("%.2f\n", delta);
 
 	// Rotate the model slowly around the y axis at 20 degrees per second
 	rotate_y += 20.0f * delta;
 	rotate_y = fmodf(rotate_y, 360.0f);
 
-	insect.update();
+	insect.update(delta);
 
 	// Draw the next frame
 	glutPostRedisplay();
@@ -215,8 +222,12 @@ void init()
 	GLuint shaderProgramID = CompileShaders();
 	insect = Insect(MESH_NAME);
 	ground = Model(Model::loadScene("ground.dae"));
+	door = Model(Model::loadScene("front_door.dae"));
+	lantern = Model(Model::loadScene("lantern.dae"));
 	insect.generateObjectBufferMesh(shaderProgramID);
 	ground.generateObjectBufferMesh(shaderProgramID);
+	door.generateObjectBufferMesh(shaderProgramID);
+	lantern.generateObjectBufferMesh(shaderProgramID);
 
 }
 
