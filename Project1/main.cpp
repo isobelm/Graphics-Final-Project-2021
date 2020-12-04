@@ -178,7 +178,13 @@ void display() {
 	doorTransformation = scale(doorTransformation, vec3(3, 3, 3));
 
 	view = translate(view, vec3(view_x, view_y, -5));
-	lanternTransformation = translate(lanternTransformation, vec3(view_x - 0.5, view_y - 0.5, -5 - 0.5));
+	lanternTransformation = scale(lanternTransformation, vec3(0.35, 0.35, 0.35));
+	lanternTransformation = translate(lanternTransformation, vec3(-0.6, 2, 0));
+	lanternTransformation = rotate_z_deg(lanternTransformation, -rotate_view_z);
+
+	lanternTransformation = translate(lanternTransformation, vec3(-view_x, -view_y, 4));
+	//doorTransformation = translate(doorTransformation, vec3(view_x, view_y, 0));
+	//lanternTransformation = translate(lanternTransformation, vec3(5, -5, -5));
 	view = rotate_z_deg(view, rotate_view_z);
 	view = rotate_x_deg(view, rotate_view_x);
 
@@ -187,7 +193,7 @@ void display() {
 	glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, view.m);
 	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, model.m);
 	insect.draw(model, matrix_location);
-	//ground.draw(groundTransformation, identity_mat4(), matrix_location);
+	ground.draw(groundTransformation, identity_mat4(), matrix_location);
 	door.draw(doorTransformation, identity_mat4(), matrix_location);
 	lantern.draw(lanternTransformation, identity_mat4(), matrix_location);
 
@@ -203,7 +209,6 @@ void updateScene() {
 		last_time = curr_time;
 	float delta = (curr_time - last_time) * 0.001f;
 	last_time = curr_time;
-	printf("%.2f\n", delta);
 
 	// Rotate the model slowly around the y axis at 20 degrees per second
 	rotate_y += 20.0f * delta;

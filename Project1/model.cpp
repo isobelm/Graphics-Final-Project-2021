@@ -42,9 +42,12 @@ std::vector<Mesh> Model::loadScene(const char* file_name) {
 	const aiScene* scene = aiImportFile(
 		file_name,
 		aiProcess_CalcTangentSpace |
+		//aiProcessPreset_TargetRealtime_MaxQuality 
+		aiProcess_OptimizeMeshes |
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
 		aiProcess_SortByPType
+	
 	);
 
 	if (!scene) {
@@ -57,11 +60,14 @@ std::vector<Mesh> Model::loadScene(const char* file_name) {
 		printf("  %i node children\n", scene->mRootNode->mNumChildren);
 		printf("  %i textures\n", scene->mNumTextures);
 
+		aiMatrix4x4 rootTransform = scene->mRootNode->mTransformation;
+
 		for (unsigned int m_i = 0; m_i < scene->mNumMeshes; m_i++) {
 			const aiMesh* mesh = scene->mMeshes[m_i];
 			printf(mesh->mName.C_Str());
 			printf("\n");
 			printf("    %i vertices in mesh\n", mesh->mNumVertices);
+			//aiMatrix4x4 aiTransform = scene->mRootNode->mChildren[m_i]->mTransformation * rootTransform;
 			aiMatrix4x4 aiTransform = scene->mRootNode->mChildren[m_i]->mTransformation;
 			mat4 transformation = mat4(aiTransform.a1, aiTransform.a2, aiTransform.a3, aiTransform.a4,
 				aiTransform.b1, aiTransform.b2, aiTransform.b3, aiTransform.b4,

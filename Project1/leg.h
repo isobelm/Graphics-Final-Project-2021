@@ -28,9 +28,9 @@ public:
 private:
 	Mesh upperLeg;
 	Mesh lowerLeg;
-	GLfloat motion_y = 0.4f;
-	GLfloat motion_x = 0.4f;
-	GLfloat cycleLength = 25.0f;
+	GLfloat motion_y = 0.6f;
+	GLfloat motion_x = 0.6f;
+	GLfloat cycleLength = 20.0f;
 	GLfloat cyclePos_x = -cycleLength;
 	GLfloat cyclePos_y = 0;
 	GLfloat hip_transform_x = -0.1f;

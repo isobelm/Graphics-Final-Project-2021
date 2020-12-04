@@ -85,15 +85,4 @@ void Leg::alternateMotion() {
 }
 
 void Leg::keypress(unsigned char key, int x, int y) {
-	switch (key) {
-	case 'c':
-		knee_transform_z += 0.05f;
-		break;
-	case 'v':
-		knee_transform_z -= 0.05f;
-		break;
-	}
-
-	printf("x:\t%f\n", knee_transform_x);
-	printf("y:\t%f\n", knee_transform_z);
 }
