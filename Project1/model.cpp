@@ -91,9 +91,9 @@ void Model::generateObjectBufferMesh(GLuint shaderProgramID) {
 	}
 };
 
-void Model::draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_location) {
+void Model::draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_location, GLuint texture) {
 	for (unsigned int i = 0; i < meshes.size(); i++) {
-		meshes[i].draw(parentTransform, childTransform, matrix_location);
+		meshes[i].draw(parentTransform, childTransform, matrix_location, texture);
 	}
 };
 

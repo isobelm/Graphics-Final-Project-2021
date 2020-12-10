@@ -38,6 +38,7 @@ Mesh::Mesh(const aiMesh* mesh, mat4 transformation, const char* aiName) {
 			mNormals.push_back(vec3(vn->x, vn->y, vn->z));
 		}
 		if (mesh->HasTextureCoords(0)) {
+			//printf("tex!");
 			const aiVector3D* vt = &(mesh->mTextureCoords[0][v_i]);
 			mTextureCoords.push_back(vec2(vt->x, vt->y));
 		}
@@ -63,10 +64,14 @@ Mesh::Mesh(const aiMesh* mesh, mat4 transformation, const char* aiName) {
 
 };
 
-void Mesh::draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_location) {
+void Mesh::draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_location, GLuint texture) {
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vp_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vn_vbo);
+	//glBindBuffer(GL_ARRAY_BUFFER, vn_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vt_vbo);
+
+	//glBindTexture(GL_TEXTURE_2D, texture);
 
 
 	//headMat = rotate_z_deg(headMat, rotate);
@@ -78,7 +83,6 @@ void Mesh::draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_locatio
 	//glDrawArrays(GL_TRIANGLES, 0, mPointCount);
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
-
 };
 
 void Mesh::generateObjectBufferMesh(GLuint shaderProgramID) {
@@ -104,7 +108,6 @@ void Mesh::generateObjectBufferMesh(GLuint shaderProgramID) {
 	glGenBuffers(1, &ebo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIndices.size() * sizeof(unsigned int), &mIndices[0], GL_STATIC_DRAW);
 	//unsigned int vn_vbo = 0;
 	glGenBuffers(1, &vn_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vn_vbo);
@@ -112,9 +115,9 @@ void Mesh::generateObjectBufferMesh(GLuint shaderProgramID) {
 
 	////	This is for texture coordinates which you don't currently need, so I have commented it out
 	//unsigned int vt_vbo = 0;
-	//glGenBuffers (1, &vt_vbo);
-	//glBindBuffer (GL_ARRAY_BUFFER, vt_vbo);
-	//glBufferData (GL_ARRAY_BUFFER, mesh_datamTextureCoords * sizeof (vec2), &mesh_data.mTextureCoords[0], GL_STATIC_DRAW);
+	glGenBuffers (1, &vt_vbo);
+	glBindBuffer (GL_ARRAY_BUFFER, vt_vbo);
+	glBufferData (GL_ARRAY_BUFFER, mPointCount * sizeof(vec2), &mTextureCoords[0], GL_STATIC_DRAW);
 
 
 	glEnableVertexAttribArray(loc1);
@@ -125,7 +128,7 @@ void Mesh::generateObjectBufferMesh(GLuint shaderProgramID) {
 	glVertexAttribPointer(loc2, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
 	////	This is for texture coordinates which you don't currently need, so I have commented it out
-	//glEnableVertexAttribArray (loc3);
-	//glBindBuffer (GL_ARRAY_BUFFER, vt_vbo);
-	//glVertexAttribPointer (loc3, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+	glEnableVertexAttribArray (loc3);
+	glBindBuffer (GL_ARRAY_BUFFER, vt_vbo);
+	glVertexAttribPointer (loc3, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 }

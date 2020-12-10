@@ -1,4 +1,8 @@
 #define _USE_MATH_DEFINES
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
 
 // Windows includes (For Time, IO, etc.)
 #include <windows.h>
@@ -24,9 +28,23 @@
 #include "insect.h"
 #include "insect.cpp"
 
-#define MESH_NAME "insect.dae"
+#define MESH_NAME "Models/insect.dae"
 
+#pragma region TEXTURE NAMES
+#define SPDR_BODY_TEX_FILE "Textures/body_tex.png"
+#define SPDR_BODY_TEX_NAME "body_texture"
+#define SPDR_EYE_TEX_FILE "Textures/Eye.png"
+#define SPDR_EYE_TEX_NAME "eye_texture"
+#define SPDR_HEAD_TEX_FILE "Textures/head_tex.png"
+#define SPDR_HEAD_TEX_NAME "head_texture"
+#define SPDR_SHOULDER_TEX_FILE "Textures/shoulder_tex.png"
+#define SPDR_SHOULDER_TEX_NAME "shoulder_texture"
 
+#define SPDR_BODY_TEX 0
+#define SPDR_EYE_TEX 1
+#define SPDR_HEAD_TEX 2
+#define SPDR_SHOULDER_TEX 3
+#pragma endregion TEXTURE NAMES
 
 using namespace std;
 GLuint shaderProgramID;
@@ -41,6 +59,7 @@ GLfloat rotate_y = 0.0f;
 GLfloat rotate_view_x = -70.0f, rotate_view_z = 0.0f;
 GLfloat view_x = 0.0f, view_y = 15.0f;
 
+GLuint textures[9];
 
 
 // Shader Functions- click on + to expand
@@ -192,10 +211,11 @@ void display() {
 	glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, persp_proj.m);
 	glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, view.m);
 	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, model.m);
-	insect.draw(model, matrix_location);
-	ground.draw(groundTransformation, identity_mat4(), matrix_location);
-	door.draw(doorTransformation, identity_mat4(), matrix_location);
-	lantern.draw(lanternTransformation, identity_mat4(), matrix_location);
+	glBindTexture(GL_TEXTURE_2D, textures[SPDR_BODY_TEX]);
+	insect.draw(model, matrix_location, textures[SPDR_BODY_TEX]);
+	//ground.draw(groundTransformation, identity_mat4(), matrix_location, textures[SPDR_BODY_TEX]);
+	//door.draw(doorTransformation, identity_mat4(), matrix_location, textures[SPDR_BODY_TEX]);
+	//lantern.draw(lanternTransformation, identity_mat4(), matrix_location, textures[SPDR_BODY_TEX]);
 
 	glutSwapBuffers();
 }
@@ -220,19 +240,59 @@ void updateScene() {
 	glutPostRedisplay();
 }
 
+void loadTexture(int active_texture, GLuint texture, const char* texture_filename, const char* texture_name, int texture_number)
+{
+	glActiveTexture(active_texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load(texture_filename, &width, &height, &nrChannels, 0);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << std::endl;
+	}
+
+	glUniform1i(glGetUniformLocation(shaderProgramID, texture_name), texture_number);
+
+	stbi_image_free(data);
+}
 
 void init()
 {
 	// Set up the shaders
 	GLuint shaderProgramID = CompileShaders();
+	printf("1\n");
+
 	insect = Insect(MESH_NAME);
-	ground = Model(Model::loadScene("ground.dae"));
-	door = Model(Model::loadScene("front_door.dae"));
-	lantern = Model(Model::loadScene("lantern.dae"));
+	//ground = Model(Model::loadScene("Models/ground.dae"));
+	//door = Model(Model::loadScene("Models/front_door.dae"));
+	//lantern = Model(Model::loadScene("Models/lantern.dae"));
+	printf("2\n");
+
 	insect.generateObjectBufferMesh(shaderProgramID);
-	ground.generateObjectBufferMesh(shaderProgramID);
-	door.generateObjectBufferMesh(shaderProgramID);
-	lantern.generateObjectBufferMesh(shaderProgramID);
+	//ground.generateObjectBufferMesh(shaderProgramID);
+	//door.generateObjectBufferMesh(shaderProgramID);
+	//lantern.generateObjectBufferMesh(shaderProgramID);
+	printf("3\n");
+
+	glGenTextures(4, textures);
+	printf("4\n");
+
+	loadTexture(GL_TEXTURE0, textures[SPDR_BODY_TEX], SPDR_BODY_TEX_FILE, SPDR_BODY_TEX_NAME, SPDR_BODY_TEX);
+	loadTexture(GL_TEXTURE1, textures[SPDR_EYE_TEX], SPDR_EYE_TEX_FILE, SPDR_EYE_TEX_NAME, SPDR_EYE_TEX);
+	loadTexture(GL_TEXTURE2, textures[SPDR_HEAD_TEX], SPDR_HEAD_TEX_FILE, SPDR_HEAD_TEX_NAME, SPDR_HEAD_TEX);
+	loadTexture(GL_TEXTURE3, textures[SPDR_SHOULDER_TEX], SPDR_SHOULDER_TEX_FILE, SPDR_SHOULDER_TEX_NAME, SPDR_SHOULDER_TEX);
+	printf("5\n");
 
 }
 

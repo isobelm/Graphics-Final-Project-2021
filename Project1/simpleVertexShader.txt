@@ -2,9 +2,11 @@
 
 in vec3 vertex_position;
 in vec3 vertex_normal;
+in vec2 vertex_texture;
 
 
 out vec3 LightIntensity;
+out vec2 TexCoord;
 
 vec4 LightPosition = vec4(10.0, 10.0, 4.0, 1.0); // Light position in world coords.
 vec3 Kd = vec3(1.0, 1.0, 1.0); // green diffuse surface reflectance
@@ -32,7 +34,7 @@ void main() {
 	//LightIntensity = Ld * Kd * max( dot( s, tnorm ), 0.0 );
 	vec3 diffuse_lighting = Ld * max(dot(s, tnorm), 0.0);
 	LightIntensity = (diffuse_lighting + ambientLight) * Kd;
-
+	TexCoord = vertex_texture;
 
 	// Convert position to clip coordinates and pass along
 	gl_Position = proj * view * model * vec4(vertex_position, 1.0);

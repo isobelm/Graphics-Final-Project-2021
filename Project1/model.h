@@ -13,6 +13,8 @@
 
 class Model {
 public:
+	//static vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
+
 	std::vector<Mesh> meshes;
 
 	Model();
@@ -22,7 +24,7 @@ public:
 
 	void generateObjectBufferMesh(GLuint shaderProgramID);
 
-	void draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_location);
+	void draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_location, GLuint texture);
 
 	void setMeshes(std::vector<Mesh> meshes);
 
