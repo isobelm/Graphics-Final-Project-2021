@@ -36,10 +36,10 @@ Insect::Insect(const char* file_name,
 	head = Model(std::vector<Mesh>{tmp[20]});
 	eyes = Model(std::vector<Mesh>{tmp[18], tmp[19]});
 	body = Model(std::vector<Mesh>{tmp[21]});
-	shoulders = Model(std::vector<Mesh>{tmp[2], tmp[5], tmp[7], tmp[11], tmp[15], tmp[13]});
-	legs[0] = Leg(tmp[1], tmp[0]);
-	legs[1] = Leg(tmp[4], tmp[3]);
-	legs[2] = Leg(tmp[6], tmp[8]);
+	shoulders = Model(std::vector<Mesh>{tmp[0], tmp[1], tmp[2], tmp[11], tmp[15], tmp[13]});
+	legs[0] = Leg(tmp[4], tmp[3]);
+	legs[1] = Leg(tmp[6], tmp[5]);
+	legs[2] = Leg(tmp[7], tmp[8]);
 	legs[3] = Leg(tmp[10], tmp[9]);
 	legs[4] = Leg(tmp[14], tmp[12]);
 	legs[5] = Leg(tmp[17], tmp[16]);
@@ -58,14 +58,14 @@ Insect::Insect(const char* file_name,
 }
 
 /*
-0	lwrleg-3-r.001
-1	uprleg-3-l
+0	shoulder-3-r
+1	shoulder-2-r
 2	shoulder-3-l
-3	lwrleg-3-r
-4	uprleg-3-r
-5	shoulder-3-r
-6	uprleg-2-r
-7	shoulder-2-r
+3	lwrleg-3-l
+4	uprleg-3-l
+5	lwrleg-3-r
+6	uprleg-3-r
+7	uprleg-2-r
 8	lwrleg-2-r
 9	lwrleg-2-l
 10	uprleg-2-l

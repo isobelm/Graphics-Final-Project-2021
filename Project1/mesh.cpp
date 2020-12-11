@@ -41,7 +41,6 @@ Mesh::Mesh(const aiMesh* mesh, mat4 transformation, const char* aiName) {
 			//printf("tex!");
 			const aiVector3D* vt = &(mesh->mTextureCoords[0][v_i]);
 			mTextureCoords.push_back(vec2(vt->x,1- vt->y));
-			printf("x: %.2f\ty: %.2f\n", vt->x, 1 -vt->y);
 		}
 		for (unsigned int i = 0; i < mesh->mNumFaces; i++)
 		{

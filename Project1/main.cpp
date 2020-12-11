@@ -27,20 +27,20 @@
 #include "maths_funcs.h"
 #include "insect.h"
 
-#define MESH_NAME "Models/insect-tex2.dae"
+#define MESH_NAME "Models/insect.dae"
 
 #pragma region TEXTURE NAMES
 #define SPDR_BODY_TEX_FILE "Textures/body_test_tex.png"
 #define SPDR_BODY_TEX_NAME "body_texture"
-#define SPDR_EYE_TEX_FILE "Textures/Eye.png"
+#define SPDR_EYE_TEX_FILE "Textures/eye-sml.png"
 #define SPDR_EYE_TEX_NAME "eye_texture"
 #define SPDR_HEAD_TEX_FILE "Textures/head.png"
 #define SPDR_HEAD_TEX_NAME "head_texture"
-#define SPDR_SHOULDER_TEX_FILE "Textures/shoulder.png"
+#define SPDR_SHOULDER_TEX_FILE "Textures/shoulder-sml.png"
 #define SPDR_SHOULDER_TEX_NAME "shoulder_texture"
-#define SPDR_UPPR_LEG_TEX_FILE "Textures/uppr_leg.png"
+#define SPDR_UPPR_LEG_TEX_FILE "Textures/uppr-leg-sml.png"
 #define SPDR_UPPR_LEG_TEX_NAME "uppr_leg_texture"
-#define SPDR_LWR_LEG_TEX_FILE "Textures/lwr_leg.png"
+#define SPDR_LWR_LEG_TEX_FILE "Textures/lwr-leg-sml.png"
 #define SPDR_LWR_LEG_TEX_NAME "lwr_leg_texture"
 
 #define SPDR_BODY_TEX 0
@@ -64,7 +64,7 @@ GLfloat rotate_y = 0.0f;
 GLfloat rotate_view_x = -70.0f, rotate_view_z = 0.0f;
 GLfloat view_x = 0.0f, view_y = 15.0f;
 
-GLuint textures[9];
+GLuint textures[6];
 
 
 // Shader Functions- click on + to expand
@@ -288,7 +288,7 @@ void init()
 	//door.generateObjectBufferMesh(shaderProgramID);
 	//lantern.generateObjectBufferMesh(shaderProgramID);
 
-	glGenTextures(4, textures);
+	glGenTextures(6, textures);
 
 	loadTexture(GL_TEXTURE0, textures[SPDR_BODY_TEX], SPDR_BODY_TEX_FILE, SPDR_BODY_TEX_NAME, SPDR_BODY_TEX);
 	loadTexture(GL_TEXTURE1, textures[SPDR_EYE_TEX], SPDR_EYE_TEX_FILE, SPDR_EYE_TEX_NAME, SPDR_EYE_TEX);
