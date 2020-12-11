@@ -8,8 +8,18 @@ uniform sampler2D body_texture;
 uniform sampler2D eye_texture;
 uniform sampler2D head_texture;
 uniform sampler2D shoulder_texture;
+uniform sampler2D uppr_leg_texture;
+uniform sampler2D lwr_leg_texture;
+
+uniform int texture_index;
 
 void main() {
 	//gl_FragColor = vec4(LightIntensity, 1.0);
-	gl_FragColor = texture(body_texture, TexCoord) * vec4(LightIntensity, 1.0);
+	if (texture_index == 0) gl_FragColor = texture(body_texture, TexCoord) * vec4(LightIntensity, 1.0);
+	if (texture_index == 1) gl_FragColor = texture(eye_texture, TexCoord) * vec4(LightIntensity, 1.0);
+	if (texture_index == 2) gl_FragColor = texture(head_texture, TexCoord) * vec4(LightIntensity, 1.0);
+	if (texture_index == 3) gl_FragColor = texture(shoulder_texture, TexCoord) * vec4(LightIntensity, 1.0);
+	if (texture_index == 4) gl_FragColor = texture(uppr_leg_texture, TexCoord) * vec4(LightIntensity, 1.0);
+	if (texture_index == 5) gl_FragColor = texture(lwr_leg_texture, TexCoord) * vec4(LightIntensity, 1.0);
+	//gl_FragColor = texture(body_texture, TexCoord) * vec4(LightIntensity, 1.0);
 }

@@ -40,7 +40,8 @@ Mesh::Mesh(const aiMesh* mesh, mat4 transformation, const char* aiName) {
 		if (mesh->HasTextureCoords(0)) {
 			//printf("tex!");
 			const aiVector3D* vt = &(mesh->mTextureCoords[0][v_i]);
-			mTextureCoords.push_back(vec2(vt->x, vt->y));
+			mTextureCoords.push_back(vec2(vt->x,1- vt->y));
+			printf("x: %.2f\ty: %.2f\n", vt->x, 1 -vt->y);
 		}
 		for (unsigned int i = 0; i < mesh->mNumFaces; i++)
 		{
@@ -64,7 +65,7 @@ Mesh::Mesh(const aiMesh* mesh, mat4 transformation, const char* aiName) {
 
 };
 
-void Mesh::draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_location, GLuint texture) {
+void Mesh::draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_location, int texture_number_loc, int texture) {
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vp_vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vn_vbo);
@@ -72,6 +73,7 @@ void Mesh::draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_locatio
 	glBindBuffer(GL_ARRAY_BUFFER, vt_vbo);
 
 	//glBindTexture(GL_TEXTURE_2D, texture);
+	glUniform1i(texture_number_loc, texture);
 
 
 	//headMat = rotate_z_deg(headMat, rotate);

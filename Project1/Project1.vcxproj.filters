@@ -30,6 +30,9 @@
     <ClCompile Include="leg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="insect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="simpleFragmentShader.txt" />

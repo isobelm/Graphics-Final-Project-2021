@@ -24,7 +24,7 @@ public:
 
 	void generateObjectBufferMesh(GLuint shaderProgramID);
 
-	void draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_location, GLuint texture);
+	void draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_location, int texture_number_loc, int texture);
 
 	void setMeshes(std::vector<Mesh> meshes);
 

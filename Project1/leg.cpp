@@ -31,7 +31,7 @@ void Leg::generateObjectBufferMesh(GLuint shaderProgramID) {
 	lowerLeg.generateObjectBufferMesh(shaderProgramID);
 };
 
-void Leg::draw(mat4 parentTransform, GLuint matrix_location, GLuint texture) {
+void Leg::draw(mat4 parentTransform, GLuint matrix_location, int texture_number_loc) {
 	mat4 hipTransform = identity_mat4();
 	mat4 kneeTransform = identity_mat4();
 	hipTransform = translate(hipTransform, vec3(hip_transform_x, 0.0f, hip_transform_z));
@@ -47,8 +47,8 @@ void Leg::draw(mat4 parentTransform, GLuint matrix_location, GLuint texture) {
 	kneeTransform = translate(kneeTransform, vec3(-knee_transform_x - hip_transform_x, 0.0f, -knee_transform_z - hip_transform_z));
 
 	//hipTransform = hipTransform * upperLeg.meshes[0].transformationMat;
-	upperLeg.draw(parentTransform, hipTransform, matrix_location, texture);
-	lowerLeg.draw(parentTransform, kneeTransform, matrix_location, texture);
+	upperLeg.draw(parentTransform, hipTransform, matrix_location, texture_number_loc, upperLegTex);
+	lowerLeg.draw(parentTransform, kneeTransform, matrix_location, texture_number_loc, lowerLegTex);
 };
 
 void Leg::update(float delta) {

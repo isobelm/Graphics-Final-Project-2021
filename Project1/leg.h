@@ -15,7 +15,7 @@ public:
 
 	void generateObjectBufferMesh(GLuint shaderProgramID);
 
-	void draw(mat4 parent, GLuint matrix_location, GLuint texture);
+	void draw(mat4 parent, GLuint matrix_location, int texture_number_loc);
 
 	void update(float delta);
 
@@ -26,10 +26,12 @@ public:
 	void switchSide();
 
 private:
+	int upperLegTex = 1;
+	int lowerLegTex = 5;
 	Mesh upperLeg;
 	Mesh lowerLeg;
-	GLfloat motion_y = 0.7f;
-	GLfloat motion_x = 0.7f;
+	GLfloat motion_y = 0.6f;
+	GLfloat motion_x = 0.6f;
 	GLfloat cycleLength = 20.0f;
 	GLfloat cyclePos_x = -cycleLength;
 	GLfloat cyclePos_y = 0;
