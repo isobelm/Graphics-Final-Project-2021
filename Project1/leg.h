@@ -26,7 +26,7 @@ public:
 	void switchSide();
 
 private:
-	int upperLegTex = 0;
+	int upperLegTex = 4;
 	int lowerLegTex = 5;
 	Mesh upperLeg;
 	Mesh lowerLeg;

@@ -97,7 +97,7 @@ void Insect::draw(mat4 parent, GLuint matrix_location, int texture_number_loc) {
 	mat4 headMat = identity_mat4();
 	head.draw(parent, identity_mat4(), matrix_location, texture_number_loc, headTex);
 	eyes.draw(parent, identity_mat4(), matrix_location, texture_number_loc, eyeTex);
-	shoulders.draw(parent, identity_mat4(), matrix_location, texture_number_loc, shoulderTex);
+	shoulders.draw(parent, identity_mat4(), matrix_location, texture_number_loc, 3);
 
 	for (int i = 0; i < 6; i++) {
 		legs[i].draw(parent, matrix_location, texture_number_loc);
