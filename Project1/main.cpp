@@ -32,7 +32,7 @@
 #pragma region TEXTURE NAMES
 #define SPDR_BODY_TEX_FILE "Textures/body_test_tex.png"
 #define SPDR_BODY_TEX_NAME "body_texture"
-#define SPDR_EYE_TEX_FILE "Textures/eye-sml.png"
+#define SPDR_EYE_TEX_FILE "Textures/Eye.png"
 #define SPDR_EYE_TEX_NAME "eye_texture"
 #define SPDR_HEAD_TEX_FILE "Textures/head.png"
 #define SPDR_HEAD_TEX_NAME "head_texture"
@@ -44,6 +44,16 @@
 #define SPDR_LWR_LEG_TEX_NAME "lwr_leg_texture"
 #define PLAIN_TEX_FILE "Textures/plain.png"
 #define PLAIN_TEX_NAME "plain_texture"
+#define BIG_RUG_TEX_FILE "Textures/big-rug.png"
+#define BIG_RUG_TEX_NAME "big_rug_texture"
+#define FLOOR_TEX_FILE "Textures/floor.png"
+#define FLOOR_TEX_NAME "floor_texture"
+#define MOULDING_TEX_FILE "Textures/moulding.png"
+#define MOULDING_TEX_NAME "moulding_texture"
+#define SML_RUG_TEX_FILE "Textures/sml-rug.png"
+#define SML_RUG_TEX_NAME "sml_rug_texture"
+#define WALL_TEX_FILE "Textures/wall.png"
+#define WALL_TEX_NAME "wall_texture"
 
 #define SPDR_BODY_TEX 0
 #define SPDR_EYE_TEX 1
@@ -52,6 +62,11 @@
 #define SPDR_UPPR_LEG_TEX 4
 #define SPDR_LWR_LEG_TEX 5
 #define PLAIN_TEX 6
+#define BIG_RUG_TEX 7
+#define FLOOR_TEX 8
+#define MOULDING_TEX 9
+#define SML_RUG_TEX 10
+#define WALL_TEX 11
 #pragma endregion TEXTURE NAMES
 
 using namespace std;
@@ -67,7 +82,7 @@ GLfloat rotate_y = 0.0f;
 GLfloat rotate_view_x = -70.0f, rotate_view_z = 0.0f;
 GLfloat view_x = 0.0f, view_y = 15.0f;
 
-GLuint textures[7];
+GLuint textures[12];
 
 
 // Shader Functions- click on + to expand
@@ -180,7 +195,7 @@ void display() {
 	// tell GL to only draw onto a pixel if the shape is closer to the viewer
 	glEnable(GL_DEPTH_TEST); // enable depth-testing
 	glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
-	glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+	glClearColor(0.76f, 0.85f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glUseProgram(shaderProgramID);
 
@@ -222,7 +237,7 @@ void display() {
 	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, model.m);
 	//glBindTexture(GL_TEXTURE_2D, textures[SPDR_BODY_TEX]);
 	insect.draw(model, matrix_location, texture_number_loc);
-	house.draw(identity_mat4(), identity_mat4(), matrix_location, texture_number_loc, PLAIN_TEX);
+	house.draw(identity_mat4(), identity_mat4(), matrix_location, texture_number_loc, 8);
 	//ground.draw(groundTransformation, identity_mat4(), matrix_location, textures[SPDR_BODY_TEX]);
 	//door.draw(doorTransformation, identity_mat4(), matrix_location, textures[SPDR_BODY_TEX]);
 	//lantern.draw(lanternTransformation, identity_mat4(), matrix_location, textures[SPDR_BODY_TEX]);
@@ -255,11 +270,6 @@ void loadTexture(int active_texture, GLuint texture, const char* texture_filenam
 	glActiveTexture(active_texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
 	int width, height, nrChannels;
 	unsigned char* data = stbi_load(texture_filename, &width, &height, &nrChannels, 0);
 	if (data)
@@ -283,7 +293,7 @@ void init()
 	GLuint shaderProgramID = CompileShaders();
 
 	insect = Insect(MESH_NAME, textures[SPDR_HEAD_TEX], textures[SPDR_BODY_TEX], textures[SPDR_EYE_TEX], textures[SPDR_SHOULDER_TEX]);
-	house = Model(Model::loadScene("Models/house_full.dae"));
+	house = Model(Model::loadScene("Models/house_full.obj"));
 	//door = Model(Model::loadScene("Models/front_door.dae"));
 	//lantern = Model(Model::loadScene("Models/lantern.dae"));
 
@@ -292,7 +302,7 @@ void init()
 	//door.generateObjectBufferMesh(shaderProgramID);
 	//lantern.generateObjectBufferMesh(shaderProgramID);
 
-	glGenTextures(7, textures);
+	glGenTextures(12, textures);
 
 	loadTexture(GL_TEXTURE0, textures[SPDR_BODY_TEX], SPDR_BODY_TEX_FILE, SPDR_BODY_TEX_NAME, SPDR_BODY_TEX);
 	loadTexture(GL_TEXTURE1, textures[SPDR_EYE_TEX], SPDR_EYE_TEX_FILE, SPDR_EYE_TEX_NAME, SPDR_EYE_TEX);
@@ -301,6 +311,11 @@ void init()
 	loadTexture(GL_TEXTURE4, textures[SPDR_UPPR_LEG_TEX], SPDR_UPPR_LEG_TEX_FILE, SPDR_UPPR_LEG_TEX_NAME, SPDR_UPPR_LEG_TEX);
 	loadTexture(GL_TEXTURE5, textures[SPDR_LWR_LEG_TEX], SPDR_LWR_LEG_TEX_FILE, SPDR_LWR_LEG_TEX_NAME, SPDR_LWR_LEG_TEX);
 	loadTexture(GL_TEXTURE6, textures[PLAIN_TEX], PLAIN_TEX_FILE, PLAIN_TEX_NAME, PLAIN_TEX);
+	loadTexture(GL_TEXTURE7, textures[BIG_RUG_TEX], BIG_RUG_TEX_FILE, BIG_RUG_TEX_NAME, BIG_RUG_TEX);
+	loadTexture(GL_TEXTURE8, textures[FLOOR_TEX], FLOOR_TEX_FILE, FLOOR_TEX_NAME, FLOOR_TEX);
+	loadTexture(GL_TEXTURE9, textures[MOULDING_TEX], MOULDING_TEX_FILE, MOULDING_TEX_NAME, MOULDING_TEX);
+	loadTexture(GL_TEXTURE10, textures[SML_RUG_TEX], SML_RUG_TEX_FILE, SML_RUG_TEX_NAME, SML_RUG_TEX);
+	loadTexture(GL_TEXTURE11, textures[WALL_TEX], WALL_TEX_FILE, WALL_TEX_NAME, WALL_TEX);
 
 }
 

@@ -33,6 +33,9 @@
     <ClCompile Include="insect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="house.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="simpleFragmentShader.txt" />
@@ -52,6 +55,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="leg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="house.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

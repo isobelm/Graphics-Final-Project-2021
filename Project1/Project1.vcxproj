@@ -123,6 +123,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="house.cpp" />
     <ClCompile Include="insect.cpp" />
     <ClCompile Include="leg.cpp" />
     <ClCompile Include="main.cpp" />
@@ -135,6 +136,7 @@
     <Text Include="simpleVertexShader.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="house.h" />
     <ClInclude Include="insect.h" />
     <ClInclude Include="leg.h" />
     <ClInclude Include="maths_funcs.h" />
