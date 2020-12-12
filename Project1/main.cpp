@@ -42,6 +42,8 @@
 #define SPDR_UPPR_LEG_TEX_NAME "uppr_leg_texture"
 #define SPDR_LWR_LEG_TEX_FILE "Textures/lwr-leg-sml.png"
 #define SPDR_LWR_LEG_TEX_NAME "lwr_leg_texture"
+#define PLAIN_TEX_FILE "Textures/plain.png"
+#define PLAIN_TEX_NAME "plain_texture"
 
 #define SPDR_BODY_TEX 0
 #define SPDR_EYE_TEX 1
@@ -49,13 +51,14 @@
 #define SPDR_SHOULDER_TEX 3
 #define SPDR_UPPR_LEG_TEX 4
 #define SPDR_LWR_LEG_TEX 5
+#define PLAIN_TEX 6
 #pragma endregion TEXTURE NAMES
 
 using namespace std;
 GLuint shaderProgramID;
 
 Insect insect = Insect();
-Model ground, door, lantern;
+Model ground, door, lantern, house;
 unsigned int mesh_vao = 0;
 int width = 800;
 int height = 600;
@@ -64,7 +67,7 @@ GLfloat rotate_y = 0.0f;
 GLfloat rotate_view_x = -70.0f, rotate_view_z = 0.0f;
 GLfloat view_x = 0.0f, view_y = 15.0f;
 
-GLuint textures[6];
+GLuint textures[7];
 
 
 // Shader Functions- click on + to expand
@@ -194,13 +197,13 @@ void display() {
 	mat4 persp_proj = perspective(45.0f, (float)width / (float)height, 0.1f, 1000.0f);
 	mat4 model = identity_mat4();
 	mat4 groundTransformation = identity_mat4();
-	mat4 doorTransformation = identity_mat4();
+	mat4 houseTransformation = identity_mat4();
 	mat4 lanternTransformation = identity_mat4();
 	model = translate(model, vec3(3.0f, 0.0f, 0.7f));
 	model = rotate_z_deg(model, -rotate_y);
 
 	groundTransformation = scale(groundTransformation, vec3(100, 100, 100));
-	doorTransformation = scale(doorTransformation, vec3(3, 3, 3));
+	houseTransformation = scale(houseTransformation, vec3(3, 3, 3));
 
 	view = translate(view, vec3(view_x, view_y, -5));
 	lanternTransformation = scale(lanternTransformation, vec3(0.35, 0.35, 0.35));
@@ -219,6 +222,7 @@ void display() {
 	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, model.m);
 	//glBindTexture(GL_TEXTURE_2D, textures[SPDR_BODY_TEX]);
 	insect.draw(model, matrix_location, texture_number_loc);
+	house.draw(identity_mat4(), identity_mat4(), matrix_location, texture_number_loc, PLAIN_TEX);
 	//ground.draw(groundTransformation, identity_mat4(), matrix_location, textures[SPDR_BODY_TEX]);
 	//door.draw(doorTransformation, identity_mat4(), matrix_location, textures[SPDR_BODY_TEX]);
 	//lantern.draw(lanternTransformation, identity_mat4(), matrix_location, textures[SPDR_BODY_TEX]);
@@ -265,7 +269,7 @@ void loadTexture(int active_texture, GLuint texture, const char* texture_filenam
 	}
 	else
 	{
-		std::cout << "Failed to load texture" << std::endl;
+		std::cout << "Failed to load texture" << texture_number << std::endl;
 	}
 
 	glUniform1i(glGetUniformLocation(shaderProgramID, texture_name), texture_number);
@@ -279,16 +283,16 @@ void init()
 	GLuint shaderProgramID = CompileShaders();
 
 	insect = Insect(MESH_NAME, textures[SPDR_HEAD_TEX], textures[SPDR_BODY_TEX], textures[SPDR_EYE_TEX], textures[SPDR_SHOULDER_TEX]);
-	//ground = Model(Model::loadScene("Models/ground.dae"));
+	house = Model(Model::loadScene("Models/house_full.dae"));
 	//door = Model(Model::loadScene("Models/front_door.dae"));
 	//lantern = Model(Model::loadScene("Models/lantern.dae"));
 
 	insect.generateObjectBufferMesh(shaderProgramID);
-	//ground.generateObjectBufferMesh(shaderProgramID);
+	house.generateObjectBufferMesh(shaderProgramID);
 	//door.generateObjectBufferMesh(shaderProgramID);
 	//lantern.generateObjectBufferMesh(shaderProgramID);
 
-	glGenTextures(6, textures);
+	glGenTextures(7, textures);
 
 	loadTexture(GL_TEXTURE0, textures[SPDR_BODY_TEX], SPDR_BODY_TEX_FILE, SPDR_BODY_TEX_NAME, SPDR_BODY_TEX);
 	loadTexture(GL_TEXTURE1, textures[SPDR_EYE_TEX], SPDR_EYE_TEX_FILE, SPDR_EYE_TEX_NAME, SPDR_EYE_TEX);
@@ -296,6 +300,7 @@ void init()
 	loadTexture(GL_TEXTURE3, textures[SPDR_SHOULDER_TEX], SPDR_SHOULDER_TEX_FILE, SPDR_SHOULDER_TEX_NAME, SPDR_SHOULDER_TEX);
 	loadTexture(GL_TEXTURE4, textures[SPDR_UPPR_LEG_TEX], SPDR_UPPR_LEG_TEX_FILE, SPDR_UPPR_LEG_TEX_NAME, SPDR_UPPR_LEG_TEX);
 	loadTexture(GL_TEXTURE5, textures[SPDR_LWR_LEG_TEX], SPDR_LWR_LEG_TEX_FILE, SPDR_LWR_LEG_TEX_NAME, SPDR_LWR_LEG_TEX);
+	loadTexture(GL_TEXTURE6, textures[PLAIN_TEX], PLAIN_TEX_FILE, PLAIN_TEX_NAME, PLAIN_TEX);
 
 }
 
