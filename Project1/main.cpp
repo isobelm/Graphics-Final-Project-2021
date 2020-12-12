@@ -1,8 +1,8 @@
 #define _USE_MATH_DEFINES
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
+//#define STB_IMAGE_IMPLEMENTATION
+//#include "stb_image.h"
+//#define STB_IMAGE_WRITE_IMPLEMENTATION
+//#include "stb_image_write.h"
 
 // Windows includes (For Time, IO, etc.)
 #include <windows.h>
@@ -24,50 +24,13 @@
 #include <assimp/postprocess.h> // various extra operations
 
 // Project includes
+#include "textures.h"
 #include "maths_funcs.h"
 #include "insect.h"
 
 #define MESH_NAME "Models/insect.dae"
 
-#pragma region TEXTURE NAMES
-#define SPDR_BODY_TEX_FILE "Textures/body_test_tex.png"
-#define SPDR_BODY_TEX_NAME "body_texture"
-#define SPDR_EYE_TEX_FILE "Textures/Eye.png"
-#define SPDR_EYE_TEX_NAME "eye_texture"
-#define SPDR_HEAD_TEX_FILE "Textures/head.png"
-#define SPDR_HEAD_TEX_NAME "head_texture"
-#define SPDR_SHOULDER_TEX_FILE "Textures/shoulder-sml.png"
-#define SPDR_SHOULDER_TEX_NAME "shoulder_texture"
-#define SPDR_UPPR_LEG_TEX_FILE "Textures/uppr-leg-sml.png"
-#define SPDR_UPPR_LEG_TEX_NAME "uppr_leg_texture"
-#define SPDR_LWR_LEG_TEX_FILE "Textures/lwr-leg-sml.png"
-#define SPDR_LWR_LEG_TEX_NAME "lwr_leg_texture"
-#define PLAIN_TEX_FILE "Textures/plain.png"
-#define PLAIN_TEX_NAME "plain_texture"
-#define BIG_RUG_TEX_FILE "Textures/big-rug.png"
-#define BIG_RUG_TEX_NAME "big_rug_texture"
-#define FLOOR_TEX_FILE "Textures/floor.png"
-#define FLOOR_TEX_NAME "floor_texture"
-#define MOULDING_TEX_FILE "Textures/moulding.png"
-#define MOULDING_TEX_NAME "moulding_texture"
-#define SML_RUG_TEX_FILE "Textures/sml-rug.png"
-#define SML_RUG_TEX_NAME "sml_rug_texture"
-#define WALL_TEX_FILE "Textures/wall.png"
-#define WALL_TEX_NAME "wall_texture"
 
-#define SPDR_BODY_TEX 0
-#define SPDR_EYE_TEX 1
-#define SPDR_HEAD_TEX 2
-#define SPDR_SHOULDER_TEX 3
-#define SPDR_UPPR_LEG_TEX 4
-#define SPDR_LWR_LEG_TEX 5
-#define PLAIN_TEX 6
-#define BIG_RUG_TEX 7
-#define FLOOR_TEX 8
-#define MOULDING_TEX 9
-#define SML_RUG_TEX 10
-#define WALL_TEX 11
-#pragma endregion TEXTURE NAMES
 
 using namespace std;
 GLuint shaderProgramID;
@@ -79,10 +42,9 @@ int width = 800;
 int height = 600;
 
 GLfloat rotate_y = 0.0f;
-GLfloat rotate_view_x = -70.0f, rotate_view_z = 0.0f;
-GLfloat view_x = 0.0f, view_y = 15.0f;
+GLfloat rotate_view_x = -90.0f, rotate_view_z = 0.0f;
+GLfloat view_x = -5.0f, view_y = 15.0f;
 
-GLuint textures[12];
 
 
 // Shader Functions- click on + to expand
@@ -217,12 +179,10 @@ void display() {
 	model = translate(model, vec3(3.0f, 0.0f, 0.7f));
 	model = rotate_z_deg(model, -rotate_y);
 
-	groundTransformation = scale(groundTransformation, vec3(100, 100, 100));
-	houseTransformation = scale(houseTransformation, vec3(3, 3, 3));
 
 	view = translate(view, vec3(view_x, view_y, -5));
-	lanternTransformation = scale(lanternTransformation, vec3(0.35, 0.35, 0.35));
-	lanternTransformation = translate(lanternTransformation, vec3(-0.6, 2, 0));
+	lanternTransformation = scale(lanternTransformation, vec3(0.35f, 0.35f, 0.35f));
+	lanternTransformation = translate(lanternTransformation, vec3(-0.6f, 2.0f, 0.0f));
 	lanternTransformation = rotate_z_deg(lanternTransformation, -rotate_view_z);
 
 	lanternTransformation = translate(lanternTransformation, vec3(-view_x, -view_y, 4));
@@ -265,28 +225,6 @@ void updateScene() {
 	glutPostRedisplay();
 }
 
-void loadTexture(int active_texture, GLuint texture, const char* texture_filename, const char* texture_name, int texture_number)
-{
-	glActiveTexture(active_texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-
-	int width, height, nrChannels;
-	unsigned char* data = stbi_load(texture_filename, &width, &height, &nrChannels, 0);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << texture_number << std::endl;
-	}
-
-	glUniform1i(glGetUniformLocation(shaderProgramID, texture_name), texture_number);
-
-	stbi_image_free(data);
-}
-
 void init()
 {
 	// Set up the shaders
@@ -294,28 +232,13 @@ void init()
 
 	insect = Insect(MESH_NAME, textures[SPDR_HEAD_TEX], textures[SPDR_BODY_TEX], textures[SPDR_EYE_TEX], textures[SPDR_SHOULDER_TEX]);
 	house = Model(Model::loadScene("Models/house_full.obj"));
-	//door = Model(Model::loadScene("Models/front_door.dae"));
 	//lantern = Model(Model::loadScene("Models/lantern.dae"));
 
 	insect.generateObjectBufferMesh(shaderProgramID);
 	house.generateObjectBufferMesh(shaderProgramID);
-	//door.generateObjectBufferMesh(shaderProgramID);
 	//lantern.generateObjectBufferMesh(shaderProgramID);
 
-	glGenTextures(12, textures);
-
-	loadTexture(GL_TEXTURE0, textures[SPDR_BODY_TEX], SPDR_BODY_TEX_FILE, SPDR_BODY_TEX_NAME, SPDR_BODY_TEX);
-	loadTexture(GL_TEXTURE1, textures[SPDR_EYE_TEX], SPDR_EYE_TEX_FILE, SPDR_EYE_TEX_NAME, SPDR_EYE_TEX);
-	loadTexture(GL_TEXTURE2, textures[SPDR_HEAD_TEX], SPDR_HEAD_TEX_FILE, SPDR_HEAD_TEX_NAME, SPDR_HEAD_TEX);
-	loadTexture(GL_TEXTURE3, textures[SPDR_SHOULDER_TEX], SPDR_SHOULDER_TEX_FILE, SPDR_SHOULDER_TEX_NAME, SPDR_SHOULDER_TEX);
-	loadTexture(GL_TEXTURE4, textures[SPDR_UPPR_LEG_TEX], SPDR_UPPR_LEG_TEX_FILE, SPDR_UPPR_LEG_TEX_NAME, SPDR_UPPR_LEG_TEX);
-	loadTexture(GL_TEXTURE5, textures[SPDR_LWR_LEG_TEX], SPDR_LWR_LEG_TEX_FILE, SPDR_LWR_LEG_TEX_NAME, SPDR_LWR_LEG_TEX);
-	loadTexture(GL_TEXTURE6, textures[PLAIN_TEX], PLAIN_TEX_FILE, PLAIN_TEX_NAME, PLAIN_TEX);
-	loadTexture(GL_TEXTURE7, textures[BIG_RUG_TEX], BIG_RUG_TEX_FILE, BIG_RUG_TEX_NAME, BIG_RUG_TEX);
-	loadTexture(GL_TEXTURE8, textures[FLOOR_TEX], FLOOR_TEX_FILE, FLOOR_TEX_NAME, FLOOR_TEX);
-	loadTexture(GL_TEXTURE9, textures[MOULDING_TEX], MOULDING_TEX_FILE, MOULDING_TEX_NAME, MOULDING_TEX);
-	loadTexture(GL_TEXTURE10, textures[SML_RUG_TEX], SML_RUG_TEX_FILE, SML_RUG_TEX_NAME, SML_RUG_TEX);
-	loadTexture(GL_TEXTURE11, textures[WALL_TEX], WALL_TEX_FILE, WALL_TEX_NAME, WALL_TEX);
+	loadAllTextures(shaderProgramID);
 
 }
 
@@ -336,12 +259,12 @@ void keypress(unsigned char key, int x, int y) {
 		rotate_view_x -= 5.0f;
 		break;
 	case 'w':
-		view_x -= sin(glm::radians(rotate_view_z)) * 0.3;
-		view_y -= cos(glm::radians(rotate_view_z)) * 0.3;
+		view_x -= sin(glm::radians(rotate_view_z)) * 0.3f;
+		view_y -= cos(glm::radians(rotate_view_z)) * 0.3f;
 		break;
 	case 's':
-		view_x += sin(glm::radians(rotate_view_z)) * 0.3;
-		view_y += cos(glm::radians(rotate_view_z)) * 0.3;
+		view_x += sin(glm::radians(rotate_view_z)) * 0.3f;
+		view_y += cos(glm::radians(rotate_view_z)) * 0.3f;
 		break;
 		//Translate the base, etc.
 	}

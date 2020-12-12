@@ -130,6 +130,7 @@
     <ClCompile Include="maths_funcs.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="model.cpp" />
+    <ClCompile Include="textures.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="simpleFragmentShader.txt" />
@@ -142,6 +143,7 @@
     <ClInclude Include="maths_funcs.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="model.h" />
+    <ClInclude Include="textures.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="monkeyhead_smooth.dae" />
