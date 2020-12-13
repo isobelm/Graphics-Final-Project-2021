@@ -16,7 +16,10 @@
 // OpenGL includes
 #include <GL/glew.h>
 #include <GL/freeglut.h>
+#include <glm/glm.hpp>
 #include <glm/trigonometric.hpp>
+#include <glm/gtc/type_ptr.hpp>
+//#include <glm/gtx/decomposition.hpp>
 
 // Assimp includes
 #include <assimp/cimport.h> // scene importer
@@ -27,6 +30,9 @@
 #include "textures.h"
 #include "maths_funcs.h"
 #include "insect.h"
+#include "house.h"
+#include "lantern.h"
+#include "spoids.h"
 
 #define MESH_NAME "Models/insect.dae"
 
@@ -35,8 +41,14 @@
 using namespace std;
 GLuint shaderProgramID;
 
-Insect insect = Insect();
-Model ground, door, lantern, house;
+//mat4 biasMatrix;
+//mat4 textureMatrix;
+
+//Insect insect = Insect();
+Spoids insects = Spoids();
+House house = House();
+Lantern lantern;
+Model cube;
 unsigned int mesh_vao = 0;
 int width = 800;
 int height = 600;
@@ -44,8 +56,6 @@ int height = 600;
 GLfloat rotate_y = 0.0f;
 GLfloat rotate_view_x = -90.0f, rotate_view_z = 0.0f;
 GLfloat view_x = -5.0f, view_y = 15.0f;
-
-
 
 // Shader Functions- click on + to expand
 #pragma region SHADER_FUNCTIONS
@@ -167,6 +177,9 @@ void display() {
 	int view_mat_location = glGetUniformLocation(shaderProgramID, "view");
 	int proj_mat_location = glGetUniformLocation(shaderProgramID, "proj");
 	int texture_number_loc = glGetUniformLocation(shaderProgramID, "texture_index");
+	int light_position_location = glGetUniformLocation(shaderProgramID, "lightPosition");
+	int light_location = glGetUniformLocation(shaderProgramID, "light");
+	int depthMatrixID = glGetUniformLocation(shaderProgramID, "depthMatrix");
 
 
 	// Root of the Hierarchy
@@ -176,11 +189,27 @@ void display() {
 	mat4 groundTransformation = identity_mat4();
 	mat4 houseTransformation = identity_mat4();
 	mat4 lanternTransformation = identity_mat4();
-	model = translate(model, vec3(3.0f, 0.0f, 0.7f));
-	model = rotate_z_deg(model, -rotate_y);
+	//model = translate(model, vec3(3.0f, 0.0f, 0.7f));
+	//model = rotate_z_deg(model, -rotate_y);
+
+	//shadows????
+	//glm::vec3 lightInvDir = glm::vec3(0.5f, 2, 2);
+
+	//// Compute the MVP matrix from the light's point of view
+	//glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
+	//glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	//glm::mat4 depthModelMatrix = glm::mat4(1.0);
+	//glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
+
+	//// Send our transformation to the currently bound shader,
+	//// in the "MVP" uniform
+	//glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &depthMVP[0][0]);
+	//end shadows
 
 
 	view = translate(view, vec3(view_x, view_y, -5));
+	lanternTransformation = rotate_x_deg(lanternTransformation, 90);
+
 	lanternTransformation = scale(lanternTransformation, vec3(0.35f, 0.35f, 0.35f));
 	lanternTransformation = translate(lanternTransformation, vec3(-0.6f, 2.0f, 0.0f));
 	lanternTransformation = rotate_z_deg(lanternTransformation, -rotate_view_z);
@@ -191,16 +220,26 @@ void display() {
 	view = rotate_z_deg(view, rotate_view_z);
 	view = rotate_x_deg(view, rotate_view_x);
 
+	vec3 lightPos = vec3(lanternTransformation.m[12], lanternTransformation.m[13], lanternTransformation.m[14]);
+
+	mat4 lightTransform = identity_mat4();
+	lightTransform = translate(lightTransform, lightPos);
+	//vec3 lightPos = vec3(-view_x, -view_y, 4) + vec3(-0.6f, 2.0f, 0.0f);
+
 	// update uniforms & draw
 	glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, persp_proj.m);
 	glUniformMatrix4fv(view_mat_location, 1, GL_FALSE, view.m);
 	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, model.m);
+	glUniform3fv(light_position_location, 1, lightPos.v);
+	glUniform1i(light_location, false);
 	//glBindTexture(GL_TEXTURE_2D, textures[SPDR_BODY_TEX]);
-	insect.draw(model, matrix_location, texture_number_loc);
-	house.draw(identity_mat4(), identity_mat4(), matrix_location, texture_number_loc, 8);
+	insects.draw(model, matrix_location, texture_number_loc);
+	//cube.draw(lightTransform, identity_mat4(), matrix_location, texture_number_loc);
+	house.draw(identity_mat4(), matrix_location, texture_number_loc);
 	//ground.draw(groundTransformation, identity_mat4(), matrix_location, textures[SPDR_BODY_TEX]);
 	//door.draw(doorTransformation, identity_mat4(), matrix_location, textures[SPDR_BODY_TEX]);
-	//lantern.draw(lanternTransformation, identity_mat4(), matrix_location, textures[SPDR_BODY_TEX]);
+	//lantern.draw(lanternTransformation, identity_mat4(), matrix_location, texture_number_loc);
+	lantern.draw(lanternTransformation, matrix_location, texture_number_loc, light_location);
 
 	glutSwapBuffers();
 }
@@ -219,10 +258,35 @@ void updateScene() {
 	rotate_y += 20.0f * delta;
 	rotate_y = fmodf(rotate_y, 360.0f);
 
-	insect.update(delta);
+	insects.update(delta);
 
 	// Draw the next frame
 	glutPostRedisplay();
+}
+
+void setupShadows() {
+	// The framebuffer, which regroups 0, 1, or more textures, and 0 or 1 depth buffer.
+	GLuint FramebufferName = 0;
+	glGenFramebuffers(1, &FramebufferName);
+	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
+
+	// Depth texture. Slower than a depth buffer, but you can sample it later in your shader
+	GLuint depthTexture;
+	glGenTextures(1, &depthTexture);
+	glBindTexture(GL_TEXTURE_2D, depthTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, 1024, 1024, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthTexture, 0);
+
+	glDrawBuffer(GL_NONE); // No color buffer is drawn to.
+
+	// Always check that our framebuffer is ok
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) printf("shadows not working");
+		//return false;
 }
 
 void init()
@@ -230,21 +294,53 @@ void init()
 	// Set up the shaders
 	GLuint shaderProgramID = CompileShaders();
 
-	insect = Insect(MESH_NAME, textures[SPDR_HEAD_TEX], textures[SPDR_BODY_TEX], textures[SPDR_EYE_TEX], textures[SPDR_SHOULDER_TEX]);
-	house = Model(Model::loadScene("Models/house_full.obj"));
-	//lantern = Model(Model::loadScene("Models/lantern.dae"));
+	insects = Spoids(MESH_NAME);
+	house = House("Models/house_full.obj");
+	//house = Model(Model::loadScene("Models/house_full.obj"));
+	lantern = Lantern("Models/lantern.obj");
+	cube = Model(Model::loadScene("Models/cube.obj"), FIRE_TEX);
 
-	insect.generateObjectBufferMesh(shaderProgramID);
+	insects.generateObjectBufferMesh(shaderProgramID);
 	house.generateObjectBufferMesh(shaderProgramID);
-	//lantern.generateObjectBufferMesh(shaderProgramID);
+	lantern.generateObjectBufferMesh(shaderProgramID);
+	cube.generateObjectBufferMesh(shaderProgramID);
 
 	loadAllTextures(shaderProgramID);
 
+
+	//Calculate texture matrix for projection
+////This matrix takes us from eye space to the light's clip space
+////It is postmultiplied by the inverse of the current view matrix when specifying texgen
+//
+//	biasMatrix = mat4(0.5f, 0.0f, 0.0f, 0.0f,
+//		0.0f, 0.5f, 0.0f, 0.0f,
+//		0.0f, 0.0f, 0.5f, 0.0f,
+//		0.5f, 0.5f, 0.5f, 1.0f);
+//
+//	textureMatrix = biasMatrix * lightProjectionMatrix*lightViewMatrix;
+//
+//	//Set up texture coordinate generation.
+//	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+//	glTexGenfv(GL_S, GL_EYE_PLANE, textureMatrix.GetRow(0));
+//	glEnable(GL_TEXTURE_GEN_S);
+//
+//	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+//	glTexGenfv(GL_T, GL_EYE_PLANE, textureMatrix.GetRow(1));
+//	glEnable(GL_TEXTURE_GEN_T);
+//
+//	glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+//	glTexGenfv(GL_R, GL_EYE_PLANE, textureMatrix.GetRow(2));
+//	glEnable(GL_TEXTURE_GEN_R);
+//
+//	glTexGeni(GL_Q, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+//	glTexGenfv(GL_Q, GL_EYE_PLANE, textureMatrix.GetRow(3));
+//	glEnable(GL_TEXTURE_GEN_Q);
+//
 }
 
 // Placeholder code for the keypress
 void keypress(unsigned char key, int x, int y) {
-	insect.keypress(key, x, y);
+	//insects.keypress(key, x, y);
 	switch (key) {
 	case 'd':
 		rotate_view_z += 5.0f;

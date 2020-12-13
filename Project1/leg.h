@@ -30,8 +30,8 @@ private:
 	int lowerLegTex = 5;
 	Mesh upperLeg;
 	Mesh lowerLeg;
-	GLfloat motion_y = 0.6f;
-	GLfloat motion_x = 0.6f;
+	GLfloat motion_y = 0.7f;
+	GLfloat motion_x = 0.7f;
 	GLfloat cycleLength = 20.0f;
 	GLfloat cyclePos_x = -cycleLength;
 	GLfloat cyclePos_y = 0;

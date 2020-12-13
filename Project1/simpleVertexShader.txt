@@ -8,32 +8,71 @@ in vec2 vertex_texture;
 out vec3 LightIntensity;
 out vec2 TexCoord;
 
-vec4 LightPosition = vec4(10.0, 10.0, 4.0, 1.0); // Light position in world coords.
-vec3 Kd = vec3(1.0, 1.0, 1.0); // green diffuse surface reflectance
-vec3 Ld = vec3(0.9, 0.95, 1); // Light source intensity
-vec3 ambientLight = vec3(0.1, 0.08, 0.15); // ambient source intensity
+struct light_data {
+	vec3 colour;
+
+	float constant;
+	float linear;
+	float quadratic;
+};
+
+light_data outsideLight;
+
+vec3 windowLight1Pos = vec3(-11.5, -6.1f, 2.1);
+vec3 windowLight2Pos = vec3(-7.7, 18.4, 2.1);
+vec3 windowLight3Pos = vec3(8.3, 18.5, 2.1);
+light_data fireLight;// Light source intensity
+vec3 ambientLight = vec3(0.5, 0.04, 0.075); // ambient source intensity
 
 
 uniform mat4 view;
 uniform mat4 proj;
 uniform mat4 model;
+uniform vec3 lightPosition;
+uniform bool light;
 
-void main() {
+vec3 calcIntensity(vec3 tnorm, vec3 lightPos, light_data light_data_obj, vec4 eyeCoords) {
+	vec3 s = normalize(vec3(lightPos - eyeCoords));
 
-	mat4 ModelViewMatrix = view * model;
-	mat3 NormalMatrix = mat3(ModelViewMatrix);
-	// Convert normal and position to eye coords
-	// Normal in view space
-	vec3 tnorm = normalize(NormalMatrix * vertex_normal);
-	// Position in view space
-	vec4 eyeCoords = ModelViewMatrix * vec4(vertex_position, 1.0);
-	//normalised vector towards the light source
-	vec3 s = normalize(vec3(LightPosition - eyeCoords));
+	vec3 viewDir = normalize(eyeCoords.xyz - vertex_position);
+	vec3 lightDir = normalize(lightPos - vertex_position);
+	vec3 reflectDir = reflect(-lightDir, tnorm);
+
+	float dist = length(lightPos - vertex_position);
+	float attenuation = 1.0 / (light_data_obj.constant + light_data_obj.linear * dist +
+		light_data_obj.quadratic * (dist * dist));
+
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
 
 	// The diffuse shading equation, dot product gives us the cosine of angle between the vectors
 	//LightIntensity = Ld * Kd * max( dot( s, tnorm ), 0.0 );
-	vec3 diffuse_lighting = Ld * max(dot(s, tnorm), 0.0);
-	LightIntensity = (diffuse_lighting + ambientLight) * Kd;
+	return light_data_obj.colour * ((max(dot(s, tnorm), 0.0) * attenuation + spec * attenuation));
+}
+
+void main() {
+	if (light) { LightIntensity = vec3(1.0f, 1.0f, 1.0f); }
+	else {
+		outsideLight.colour = vec3(0.76f, 0.85f, 1.0f);
+		outsideLight.constant = 1.0;
+		outsideLight.linear = 0.09;
+		outsideLight.quadratic = 0.062;
+
+		fireLight.colour = vec3(0.9, 0.7, 0.3);
+		fireLight.constant = 1.0;
+		fireLight.linear = 0.05;
+		fireLight.quadratic = 0.012;
+
+		mat4 ModelViewMatrix = view * model;
+		mat3 NormalMatrix = mat3(ModelViewMatrix);
+		// Convert normal and position to eye coords
+		// Normal in view space
+		vec3 tnorm = normalize(NormalMatrix * vertex_normal);
+		// Position in view space
+		vec4 eyeCoords = ModelViewMatrix * vec4(vertex_position, 1.0);
+		LightIntensity = calcIntensity(tnorm, lightPosition, fireLight, eyeCoords) + calcIntensity(tnorm, windowLight1Pos, outsideLight, eyeCoords)
+			+ calcIntensity(tnorm, windowLight2Pos, outsideLight, eyeCoords) + calcIntensity(tnorm, windowLight3Pos, outsideLight, eyeCoords);
+	}
+
 	TexCoord = vertex_texture;
 
 	// Convert position to clip coordinates and pass along

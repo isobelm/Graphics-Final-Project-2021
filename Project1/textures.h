@@ -28,6 +28,10 @@
 #define SML_RUG_TEX_NAME "sml_rug_texture"
 #define WALL_TEX_FILE "Textures/wall.png"
 #define WALL_TEX_NAME "wall_texture"
+#define LANTERN_TEX_FILE "Textures/lantern.png"
+#define LANTERN_TEX_NAME "lantern_texture"
+#define FIRE_TEX_FILE "Textures/fire.png"
+#define FIRE_TEX_NAME "fire_texture"
 
 #define SPDR_BODY_TEX 0
 #define SPDR_EYE_TEX 1
@@ -41,10 +45,12 @@
 #define MOULDING_TEX 9
 #define SML_RUG_TEX 10
 #define WALL_TEX 11
+#define LANTERN_TEX 12
+#define FIRE_TEX 13
 
 //#pragma endregion TEXTURE NAMES
 
-#define NUM_TEXTURES 12
+#define NUM_TEXTURES 14
 
 extern GLuint textures[NUM_TEXTURES];
 

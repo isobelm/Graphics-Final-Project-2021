@@ -1,33 +1,29 @@
 //#pragma once
-#ifndef House_H
-#define House_H
-//#define House_MESH "Models/House.dae"
+#ifndef SPOIDS_H
+#define SPOIDS_H
 #include "model.h"
+#include "insect.h"
 
 // OpenGL includes
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
-class House {
+class Spoids {
 public:
 
-	House();
+	Spoids();
 
-	House(const char* file_name);
+	Spoids(const char* file_name);
 
 	void generateObjectBufferMesh(GLuint shaderProgramID);
 
 	void draw(mat4 parent, GLuint matrix_location, int texture_number_loc);
 
+	void update(float delta);
+
 private:
-	Model floor;
-	Model wall;
-	Model ceiling;
-	Model doors;
-	Model windows;
-	Model moulding;
-	Model bigRug;
-	Model smlRug;
+	int num_spoids = 4;
+	Insect spoids[4];
 };
 
 #endif

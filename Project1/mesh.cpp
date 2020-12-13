@@ -72,7 +72,6 @@ void Mesh::draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_locatio
 	glBindBuffer(GL_ARRAY_BUFFER, vt_vbo);
 
 	//glBindTexture(GL_TEXTURE_2D, texture);
-	glUniform1i(texture_number_loc, texture);
 
 
 	//headMat = rotate_z_deg(headMat, rotate);

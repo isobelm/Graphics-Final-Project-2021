@@ -45,4 +45,6 @@ void loadAllTextures(GLuint shaderProgramID)
 	loadTexture(GL_TEXTURE9, textures[MOULDING_TEX], MOULDING_TEX_FILE, MOULDING_TEX_NAME, MOULDING_TEX, shaderProgramID);
 	loadTexture(GL_TEXTURE10, textures[SML_RUG_TEX], SML_RUG_TEX_FILE, SML_RUG_TEX_NAME, SML_RUG_TEX, shaderProgramID);
 	loadTexture(GL_TEXTURE11, textures[WALL_TEX], WALL_TEX_FILE, WALL_TEX_NAME, WALL_TEX, shaderProgramID);
+	loadTexture(GL_TEXTURE12, textures[LANTERN_TEX], LANTERN_TEX_FILE, LANTERN_TEX_NAME, LANTERN_TEX, shaderProgramID);
+	loadTexture(GL_TEXTURE13, textures[FIRE_TEX], FIRE_TEX_FILE, FIRE_TEX_NAME, FIRE_TEX, shaderProgramID);
 }

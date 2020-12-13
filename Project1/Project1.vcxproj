@@ -125,24 +125,30 @@
   <ItemGroup>
     <ClCompile Include="house.cpp" />
     <ClCompile Include="insect.cpp" />
+    <ClCompile Include="lantern.cpp" />
     <ClCompile Include="leg.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="maths_funcs.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="model.cpp" />
+    <ClCompile Include="spoids.cpp" />
     <ClCompile Include="textures.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="shadowFragmentShader.txt" />
+    <Text Include="shadowVertexShader.txt" />
     <Text Include="simpleFragmentShader.txt" />
     <Text Include="simpleVertexShader.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="lantern.h" />
     <ClInclude Include="house.h" />
     <ClInclude Include="insect.h" />
     <ClInclude Include="leg.h" />
     <ClInclude Include="maths_funcs.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="model.h" />
+    <ClInclude Include="spoids.h" />
     <ClInclude Include="textures.h" />
   </ItemGroup>
   <ItemGroup>

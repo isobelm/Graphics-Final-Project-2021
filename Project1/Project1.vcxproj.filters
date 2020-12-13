@@ -39,10 +39,18 @@
     <ClCompile Include="textures.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="lantern.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="spoids.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="simpleFragmentShader.txt" />
     <Text Include="simpleVertexShader.txt" />
+    <Text Include="shadowVertexShader.txt" />
+    <Text Include="shadowFragmentShader.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="maths_funcs.h">
@@ -64,6 +72,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="textures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lantern.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="spoids.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

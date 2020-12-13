@@ -16,6 +16,8 @@ uniform sampler2D floor_texture;
 uniform sampler2D moulding_texture;
 uniform sampler2D sml_rug_texture;
 uniform sampler2D wall_texture;
+uniform sampler2D lantern_texture;
+uniform sampler2D fire_texture;
 
 uniform int texture_index;
 
@@ -33,5 +35,7 @@ void main() {
 	if (texture_index == 9) gl_FragColor = texture(moulding_texture, TexCoord) * vec4(LightIntensity, 1.0);
 	if (texture_index == 10) gl_FragColor = texture(sml_rug_texture, TexCoord) * vec4(LightIntensity, 1.0);
 	if (texture_index == 11) gl_FragColor = texture(wall_texture, TexCoord) * vec4(LightIntensity, 1.0);
+	if (texture_index == 12) gl_FragColor = texture(lantern_texture, TexCoord) * vec4(LightIntensity, 1.0);
+	if (texture_index == 13) gl_FragColor = texture(fire_texture, TexCoord) * vec4(LightIntensity, 1.0);
 	//gl_FragColor = texture(body_texture, TexCoord) * vec4(LightIntensity, 1.0);
 }

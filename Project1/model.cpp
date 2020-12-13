@@ -27,8 +27,9 @@
 
 Model::Model() {};
 
-Model::Model(std::vector<Mesh> meshesVec) {
+Model::Model(std::vector<Mesh> meshesVec, int texture) {
 	meshes = meshesVec;
+	this->texture = texture;
 };
 
 std::vector<Mesh> Model::loadScene(const char* file_name) {
@@ -42,7 +43,6 @@ std::vector<Mesh> Model::loadScene(const char* file_name) {
 	const aiScene* scene = aiImportFile(
 		file_name,
 		aiProcess_CalcTangentSpace |
-		//aiProcessPreset_TargetRealtime_MaxQuality 
 		aiProcess_OptimizeMeshes |
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
@@ -91,7 +91,9 @@ void Model::generateObjectBufferMesh(GLuint shaderProgramID) {
 	}
 };
 
-void Model::draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_location, int texture_number_loc, int texture) {
+void Model::draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_location, int texture_number_loc) {
+	glUniform1i(texture_number_loc, texture);
+
 	for (unsigned int i = 0; i < meshes.size(); i++) {
 		meshes[i].draw(parentTransform, childTransform, matrix_location, texture_number_loc, texture);
 	}

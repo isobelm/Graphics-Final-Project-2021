@@ -19,16 +19,19 @@ public:
 
 	Model();
 
-	Model(std::vector<Mesh> meshesVec);
+	Model(std::vector<Mesh> meshesVec, int texture);
 	//Model(const char* file_name);
 
 	void generateObjectBufferMesh(GLuint shaderProgramID);
 
-	void draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_location, int texture_number_loc, int texture);
+	void draw(mat4 parentTransform, mat4 childTransform, GLuint matrix_location, int texture_number_loc);
 
 	void setMeshes(std::vector<Mesh> meshes);
 
 	static std::vector<Mesh> loadScene(const char* file_name);
+
+private:
+	int texture;
 
 };
 
