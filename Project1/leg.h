@@ -28,13 +28,14 @@ public:
 private:
 	int upperLegTex = 4;
 	int lowerLegTex = 5;
-	Mesh upperLeg;
-	Mesh lowerLeg;
+	Model upperLeg;
+	Model lowerLeg;
 	GLfloat motion_y = 0.7f;
 	GLfloat motion_x = 0.7f;
 	GLfloat cycleLength = 20.0f;
 	GLfloat cyclePos_x = -cycleLength;
 	GLfloat cyclePos_y = 0;
+	GLfloat universalPos = 0;
 	GLfloat hip_transform_x = -0.1f;
 	GLfloat hip_transform_z = 0.45f;
 	GLfloat knee_transform_x = 0.9f;

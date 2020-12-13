@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+
 // Windows includes (For Time, IO, etc.)
 #include <windows.h>
 #include <mmsystem.h>
@@ -28,7 +30,9 @@ const line Insect::walls[] = {
 	{FLOOR_PT_1_X, FLOOR_PT_1_Y, FLOOR_PT_2_X, FLOOR_PT_2_Y},
 	{FLOOR_PT_2_X, FLOOR_PT_2_Y, FLOOR_PT_3_X, FLOOR_PT_3_Y},
 	{FLOOR_PT_3_X, FLOOR_PT_3_Y, FLOOR_PT_4_X, FLOOR_PT_4_Y},
-	{FLOOR_PT_4_X, FLOOR_PT_4_Y, FLOOR_PT_1_X, FLOOR_PT_1_Y},
+	{FLOOR_PT_4_X, FLOOR_PT_4_Y, FLOOR_PT_5_X, FLOOR_PT_5_Y},
+	{FLOOR_PT_5_X, FLOOR_PT_5_Y, FLOOR_PT_6_X, FLOOR_PT_6_Y},
+	{FLOOR_PT_6_X, FLOOR_PT_6_Y, FLOOR_PT_1_X, FLOOR_PT_1_Y},
 };
 
 
@@ -61,10 +65,6 @@ Insect::Insect(std::vector<Mesh> tmp, GLfloat x, GLfloat y) {
 
 	this->x = x;
 	this->y = y;
-	//headTex = headTex;
-	//bodyTex = bodyTex;
-	//legTex = legTex;
-	//shoulderTex = shoulderTex;
 }
 
 /*
@@ -103,7 +103,7 @@ void Insect::generateObjectBufferMesh(GLuint shaderProgramID) {
 
 void Insect::draw(mat4 parent, GLuint matrix_location, int texture_number_loc) {
 
-	parent = rotate_z_deg(parent, 90 - dir);
+	parent = rotate_z_deg(parent, 90 + glm::degrees(dir));
 	parent = translate(parent, vec3(x, y, 0.7f));
 
 	body.draw(parent, identity_mat4(), matrix_location, texture_number_loc);
@@ -118,22 +118,21 @@ void Insect::draw(mat4 parent, GLuint matrix_location, int texture_number_loc) {
 	}
 }
 
-void Insect::update(float delta) {
+void Insect::update(float delta, std::vector<point> fellowsPos, int numFellows) {
 	//rotate += 0.1f * delta * 50;
 	vec3 direction = vec3(0.0f, 0.0f, 0.0f);
-	for (int i = 0; i < 4; i++) {
-		if (distanceFromWall(x, y, walls[i]) < 2) {
-			direction += getDirectiontoTurn(dir, walls[i]);
-		}
+	for (int i = 0; i < 6; i++) {
+		direction += avoidWall(walls[i]) * 2;
 	}
+	for (int i = 0; i < numFellows; i++) {
+		direction += avoidFellows(fellowsPos[i].x, fellowsPos[i].y);
+	}
+	direction = normalise(direction);
+	vec3 newDir = normalise((vec3(cos(dir), sin(dir), 0.0f) * 9 ) + direction);
+	dir = glm::atan(newDir.v[1], newDir.v[0]);
 
-	dir +=  0.1 * (-glm::atan(direction.v[1], direction.v[0]));
-	/*
-		if (direction < 0) dir += delta * 100;
-		if (direction > 0) dir -=  delta * 100;*/
-
-	y += sin(glm::radians(dir)) * speed * delta;
-	x += cos(glm::radians(dir)) * speed * delta;
+	y += sin((dir)) * speed * delta;
+	x += cos((dir)) * speed * delta;
 	for (int i = 0; i < 6; i++) {
 		legs[i].update(delta);
 	}
@@ -143,57 +142,30 @@ void Insect::keypress(unsigned char key, int x, int y) {
 	leg.keypress(key, x, y);
 }
 
-float Insect::distanceFromWall(float a, float b, line l) {
+vec3 Insect::avoidWall(line l) {
 	float m = (l.y2 - l.y1) / (l.x2 - l.x1);
-	//printf("m: %.2f\n", m);
 
 	float c = (-(m * l.x1) + l.y1);
-	//printf("c: %.2f\n", c);
-
-	float dist = (m * a) - b + c;
-	//printf("x: %.2f   y: %.2f\n", l.x1, l.y1);
-	//printf("abs: %.2f\n", dist);
-
-	if (dist < 0) dist = -dist;
-	//printf("abs: %.2f\n", dist);
-
-	dist = dist / (sqrtf(m * m + 1));
-	//printf("%.2f\n", dist);
-	return dist;
-}
-
-vec3 Insect::getDirectiontoTurn(float dir, line l) {
-	float m = (l.y2 - l.y1) / (l.x2 - l.x1);
-	//printf("m: %.2f\n", m);
-
-	float c = (-(m * l.x1) + l.y1);
-	//printf("c: %.2f\n", c);
 
 	float dist = (m * x) - y + c;
-	//printf("x: %.2f   y: %.2f\n", l.x1, l.y1);
-	//printf("abs: %.2f\n", dist);
 
 	int sideOfLine = 1;
+	if ((m * x) - y - c < 0) sideOfLine = -1;
 	if (dist < 0) {
 		dist = -dist;
-		sideOfLine = -1;
 	}
-	//printf("abs: %.2f\n", dist);
 
 	dist = dist / (sqrtf(m * m + 1));
 
-	if (dist > 2) return vec3(0.0f, 0.0f, 0.0f);
+	if (dist > 3) return vec3(0.0f, 0.0f, 0.0f);
 
-	printf("x: %.2f y: %.2f\n", cos(tan(m)) * sideOfLine, sin(tan(m)) * sideOfLine);
+	return vec3(sin(tan(m)) * sideOfLine, cos(tan(m)) * sideOfLine, 0.0f);
+}
 
-	return vec3(cos(tan(m)) * sideOfLine, sin(tan(m)) * sideOfLine, 0.0f);
+vec3 Insect::avoidFellows(float fellowX, float fellowY) {
+	float dist = sqrtf((x - fellowX) * (x - fellowX) + (y - fellowY) * (y - fellowY));
 
+	if (dist > 4) return vec3(0.0f, 0.0f, 0.0f);
 
-	//float angle = tan((dir - m) / (1 + dir * m));
-	//printf("%.2f\n", angle);
-
-	//if (angle < 0) return 0;
-	//else if (angle > 90) return 1;
-	//else return -1;
-
+	return vec3(x - fellowX, y - fellowY, 0.0f);
 }

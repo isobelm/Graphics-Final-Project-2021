@@ -15,6 +15,7 @@
 // Project includes
 #include "maths_funcs.h"
 #include "mesh.h"
+#include "textures.h"
 #include "model.h"
 #include "leg.h"
 
@@ -22,8 +23,9 @@
 Leg::Leg() {};
 
 Leg::Leg(Mesh upprLeg, Mesh lwrLeg) {
-	upperLeg = upprLeg;
-	lowerLeg = lwrLeg;
+	upperLeg = Model(std::vector<Mesh> {upprLeg}, SPDR_UPPR_LEG_TEX);
+	lowerLeg = Model(std::vector<Mesh> {lwrLeg}, SPDR_LWR_LEG_TEX);
+	//lowerLeg = lwrLeg;
 };
 
 void Leg::generateObjectBufferMesh(GLuint shaderProgramID) {
@@ -47,8 +49,8 @@ void Leg::draw(mat4 parentTransform, GLuint matrix_location, int texture_number_
 	kneeTransform = translate(kneeTransform, vec3(-knee_transform_x - hip_transform_x, 0.0f, -knee_transform_z - hip_transform_z));
 
 	//hipTransform = hipTransform * upperLeg.meshes[0].transformationMat;
-	upperLeg.draw(parentTransform, hipTransform, matrix_location, texture_number_loc, upperLegTex);
-	lowerLeg.draw(parentTransform, kneeTransform, matrix_location, texture_number_loc, lowerLegTex);
+	upperLeg.draw(parentTransform, hipTransform, matrix_location, texture_number_loc);
+	lowerLeg.draw(parentTransform, kneeTransform, matrix_location, texture_number_loc);
 };
 
 void Leg::update(float delta) {

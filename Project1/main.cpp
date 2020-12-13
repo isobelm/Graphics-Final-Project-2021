@@ -55,7 +55,10 @@ int height = 600;
 
 GLfloat rotate_y = 0.0f;
 GLfloat rotate_view_x = -90.0f, rotate_view_z = 0.0f;
+//GLfloat rotate_view_x = -80.0f, rotate_view_z = 0.0f;
 GLfloat view_x = -5.0f, view_y = 15.0f;
+//GLfloat view_x = -5.0f, view_y = -13.0f;
+//GLfloat view_x = -7.0f, view_y = -13.0f;
 
 // Shader Functions- click on + to expand
 #pragma region SHADER_FUNCTIONS
@@ -222,8 +225,8 @@ void display() {
 
 	vec3 lightPos = vec3(lanternTransformation.m[12], lanternTransformation.m[13], lanternTransformation.m[14]);
 
-	mat4 lightTransform = identity_mat4();
-	lightTransform = translate(lightTransform, lightPos);
+	mat4 cubeTransform = identity_mat4();
+	cubeTransform = translate(cubeTransform, vec3(FLOOR_PT_1_X, FLOOR_PT_1_Y, 1.0f));
 	//vec3 lightPos = vec3(-view_x, -view_y, 4) + vec3(-0.6f, 2.0f, 0.0f);
 
 	// update uniforms & draw
@@ -234,7 +237,10 @@ void display() {
 	glUniform1i(light_location, false);
 	//glBindTexture(GL_TEXTURE_2D, textures[SPDR_BODY_TEX]);
 	insects.draw(model, matrix_location, texture_number_loc);
-	//cube.draw(lightTransform, identity_mat4(), matrix_location, texture_number_loc);
+	//glUniform1i(light_location, true);
+	//cube.draw(cubeTransform, identity_mat4(), matrix_location, texture_number_loc);
+	//glUniform1i(light_location, false);
+
 	house.draw(identity_mat4(), matrix_location, texture_number_loc);
 	//ground.draw(groundTransformation, identity_mat4(), matrix_location, textures[SPDR_BODY_TEX]);
 	//door.draw(doorTransformation, identity_mat4(), matrix_location, textures[SPDR_BODY_TEX]);
@@ -355,12 +361,12 @@ void keypress(unsigned char key, int x, int y) {
 		rotate_view_x -= 5.0f;
 		break;
 	case 'w':
-		view_x -= sin(glm::radians(rotate_view_z)) * 0.3f;
-		view_y -= cos(glm::radians(rotate_view_z)) * 0.3f;
+		view_x -= sin(glm::radians(rotate_view_z)) * 0.4f;
+		view_y -= cos(glm::radians(rotate_view_z)) * 0.4f;
 		break;
 	case 's':
-		view_x += sin(glm::radians(rotate_view_z)) * 0.3f;
-		view_y += cos(glm::radians(rotate_view_z)) * 0.3f;
+		view_x += sin(glm::radians(rotate_view_z)) * 0.4f;
+		view_y += cos(glm::radians(rotate_view_z)) * 0.4f;
 		break;
 		//Translate the base, etc.
 	}

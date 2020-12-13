@@ -20,7 +20,8 @@
 #include "maths_funcs.h"
 #include "mesh.h"
 #include "model.h"
-#include "Spoids.h"
+#include "spoids.h"
+#include "insect.h"
 #include "textures.h"
 
 //using namespace std;
@@ -54,7 +55,13 @@ void Spoids::draw(mat4 parent, GLuint matrix_location, int texture_number_loc) {
 
 void Spoids::update(float delta) {
 	for (int i = 0; i < num_spoids; i++) {
-		spoids[i].update(delta);
+		std::vector<point> fellowsPos;
+		for (int j = 0; j < num_spoids; j++) {
+			if (j != i) {
+				fellowsPos.push_back(point{ spoids[j].x, spoids[j].y });
+			}
+		}
+		spoids[i].update(delta, fellowsPos, num_spoids - 1);
 	}
 }
 
