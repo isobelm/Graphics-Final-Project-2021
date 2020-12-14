@@ -34,7 +34,7 @@ Spoids::Spoids(const char* file_name) {
 	spoids[0] = *new Insect(tmp, 7, 13);
 	spoids[1] = *new Insect(tmp, -7, 13);
 	spoids[2] = *new Insect(tmp, -7, 1.3);
-	spoids[3] = *new Insect(tmp, -7, 9);
+	spoids[3] = *new Insect(tmp, -7, -9);
 
 	/*for (int i = 0; i < num_spoids; i++) {
 		

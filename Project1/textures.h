@@ -32,6 +32,8 @@
 #define LANTERN_TEX_NAME "lantern_texture"
 #define FIRE_TEX_FILE "Textures/fire.png"
 #define FIRE_TEX_NAME "fire_texture"
+#define TREE_TEX_FILE "Textures/tree_tex.png"
+#define TREE_TEX_NAME "tree_texture"
 
 #define SPDR_BODY_TEX 0
 #define SPDR_EYE_TEX 1
@@ -47,10 +49,11 @@
 #define WALL_TEX 11
 #define LANTERN_TEX 12
 #define FIRE_TEX 13
+#define TREE_TEX 14
 
 //#pragma endregion TEXTURE NAMES
 
-#define NUM_TEXTURES 14
+#define NUM_TEXTURES 15
 
 extern GLuint textures[NUM_TEXTURES];
 

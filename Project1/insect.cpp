@@ -122,10 +122,10 @@ void Insect::update(float delta, std::vector<point> fellowsPos, int numFellows) 
 	//rotate += 0.1f * delta * 50;
 	vec3 direction = vec3(0.0f, 0.0f, 0.0f);
 	for (int i = 0; i < 6; i++) {
-		direction += avoidWall(walls[i]) * 2;
+		direction += normalise(avoidWall(walls[i])) * 5;
 	}
 	for (int i = 0; i < numFellows; i++) {
-		direction += avoidFellows(fellowsPos[i].x, fellowsPos[i].y);
+		direction += normalise(avoidFellows(fellowsPos[i].x, fellowsPos[i].y));
 	}
 	direction = normalise(direction);
 	vec3 newDir = normalise((vec3(cos(dir), sin(dir), 0.0f) * 9 ) + direction);
@@ -143,23 +143,63 @@ void Insect::keypress(unsigned char key, int x, int y) {
 }
 
 vec3 Insect::avoidWall(line l) {
-	float m = (l.y2 - l.y1) / (l.x2 - l.x1);
+	float m1 = (l.y2 - l.y1) / (l.x2 - l.x1);
+	float c1 = (-(m1 * l.x1) + l.y1);
 
-	float c = (-(m * l.x1) + l.y1);
+	float m2 = -1 / m1;
+	float c2 = (-(m2 * x) + y);
 
-	float dist = (m * x) - y + c;
+	float intersectionX = (c2 - c1) / (m1 - m2);
+	float intersectionY = m1 * intersectionX + c1;
 
-	int sideOfLine = 1;
-	if ((m * x) - y - c < 0) sideOfLine = -1;
-	if (dist < 0) {
-		dist = -dist;
+	float bigEndpointX = l.x1;
+	float bigEndpointY = l.y1;
+	float smallEndpointX = l.x2;
+	float smallEndpointY = l.y2;
+
+	if (smallEndpointX > bigEndpointX) {
+		bigEndpointX = l.x2;
+		bigEndpointY = l.y2;
+		smallEndpointX = l.x1;
+		smallEndpointY = l.y1;
 	}
 
-	dist = dist / (sqrtf(m * m + 1));
+	if (intersectionX > bigEndpointX) {
+		intersectionX = bigEndpointX;
+		intersectionY = bigEndpointY;
+	}
+	if (intersectionX < smallEndpointX) {
+		intersectionX = smallEndpointX;
+		intersectionY = smallEndpointY;
+	}
 
+	//printf("x: %.2f   y: %.2f\n", intersectionX, intersectionY);
+
+	float dist = sqrtf((x - intersectionX) * (x - intersectionX) + (y - intersectionY) * (y - intersectionY));
+
+	if (dist > 5) return vec3(0.0f, 0.0f, 0.0f);
+	//printf("m1: %.2f   c2: %.2f\n", m1, c1);
+	//printf("m2: %.2f   c2: %.2f\n", m2, c2);
+
+	//printf("x: %.2f   y: %.2f\n", intersectionX, intersectionY);
+
+	return vec3(x - intersectionX, y - intersectionY, 0.0f);
+
+	//float dist = (m * x) - y + c;
+
+	//int sideOfLine = 1;
+	//if ((m * x) - y - c < 0) sideOfLine = -1;
+	//if (dist < 0) {
+	//	dist = -dist;
+	//}
+
+	//dist = dist / (sqrtf(m * m + 1));
+
+	//return avoidFellows(intersectionX, intersectionY);
+/*
 	if (dist > 3) return vec3(0.0f, 0.0f, 0.0f);
 
-	return vec3(sin(tan(m)) * sideOfLine, cos(tan(m)) * sideOfLine, 0.0f);
+	return vec3(sin(tan(m)) * sideOfLine, cos(tan(m)) * sideOfLine, 0.0f);*/
 }
 
 vec3 Insect::avoidFellows(float fellowX, float fellowY) {

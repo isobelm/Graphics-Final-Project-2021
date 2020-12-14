@@ -57,7 +57,7 @@ void main() {
 		outsideLight.linear = 0.09;
 		outsideLight.quadratic = 0.062;
 
-		fireLight.colour = vec3(0.9, 0.7, 0.3);
+		fireLight.colour = vec3(1.0, 0.7, 0.5);
 		fireLight.constant = 1.0;
 		fireLight.linear = 0.05;
 		fireLight.quadratic = 0.012;

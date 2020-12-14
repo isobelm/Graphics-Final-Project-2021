@@ -47,4 +47,5 @@ void loadAllTextures(GLuint shaderProgramID)
 	loadTexture(GL_TEXTURE11, textures[WALL_TEX], WALL_TEX_FILE, WALL_TEX_NAME, WALL_TEX, shaderProgramID);
 	loadTexture(GL_TEXTURE12, textures[LANTERN_TEX], LANTERN_TEX_FILE, LANTERN_TEX_NAME, LANTERN_TEX, shaderProgramID);
 	loadTexture(GL_TEXTURE13, textures[FIRE_TEX], FIRE_TEX_FILE, FIRE_TEX_NAME, FIRE_TEX, shaderProgramID);
+	loadTexture(GL_TEXTURE14, textures[TREE_TEX], TREE_TEX_FILE, TREE_TEX_NAME, TREE_TEX, shaderProgramID);
 }

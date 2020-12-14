@@ -48,17 +48,14 @@ GLuint shaderProgramID;
 Spoids insects = Spoids();
 House house = House();
 Lantern lantern;
-Model cube;
+Model trees, cube;
 unsigned int mesh_vao = 0;
 int width = 800;
 int height = 600;
 
 GLfloat rotate_y = 0.0f;
 GLfloat rotate_view_x = -90.0f, rotate_view_z = 0.0f;
-//GLfloat rotate_view_x = -80.0f, rotate_view_z = 0.0f;
 GLfloat view_x = -5.0f, view_y = 15.0f;
-//GLfloat view_x = -5.0f, view_y = -13.0f;
-//GLfloat view_x = -7.0f, view_y = -13.0f;
 
 // Shader Functions- click on + to expand
 #pragma region SHADER_FUNCTIONS
@@ -192,23 +189,6 @@ void display() {
 	mat4 groundTransformation = identity_mat4();
 	mat4 houseTransformation = identity_mat4();
 	mat4 lanternTransformation = identity_mat4();
-	//model = translate(model, vec3(3.0f, 0.0f, 0.7f));
-	//model = rotate_z_deg(model, -rotate_y);
-
-	//shadows????
-	//glm::vec3 lightInvDir = glm::vec3(0.5f, 2, 2);
-
-	//// Compute the MVP matrix from the light's point of view
-	//glm::mat4 depthProjectionMatrix = glm::ortho<float>(-10, 10, -10, 10, -10, 20);
-	//glm::mat4 depthViewMatrix = glm::lookAt(lightInvDir, glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-	//glm::mat4 depthModelMatrix = glm::mat4(1.0);
-	//glm::mat4 depthMVP = depthProjectionMatrix * depthViewMatrix * depthModelMatrix;
-
-	//// Send our transformation to the currently bound shader,
-	//// in the "MVP" uniform
-	//glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &depthMVP[0][0]);
-	//end shadows
-
 
 	view = translate(view, vec3(view_x, view_y, -5));
 	lanternTransformation = rotate_x_deg(lanternTransformation, 90);
@@ -218,16 +198,14 @@ void display() {
 	lanternTransformation = rotate_z_deg(lanternTransformation, -rotate_view_z);
 
 	lanternTransformation = translate(lanternTransformation, vec3(-view_x, -view_y, 4));
-	//doorTransformation = translate(doorTransformation, vec3(view_x, view_y, 0));
-	//lanternTransformation = translate(lanternTransformation, vec3(5, -5, -5));
 	view = rotate_z_deg(view, rotate_view_z);
 	view = rotate_x_deg(view, rotate_view_x);
 
 	vec3 lightPos = vec3(lanternTransformation.m[12], lanternTransformation.m[13], lanternTransformation.m[14]);
 
-	mat4 cubeTransform = identity_mat4();
-	cubeTransform = translate(cubeTransform, vec3(FLOOR_PT_1_X, FLOOR_PT_1_Y, 1.0f));
-	//vec3 lightPos = vec3(-view_x, -view_y, 4) + vec3(-0.6f, 2.0f, 0.0f);
+	mat4 treesTransform = identity_mat4();
+	treesTransform = scale(treesTransform, vec3(1.5f, 1.5f, 1.5f));
+
 
 	// update uniforms & draw
 	glUniformMatrix4fv(proj_mat_location, 1, GL_FALSE, persp_proj.m);
@@ -235,16 +213,13 @@ void display() {
 	glUniformMatrix4fv(matrix_location, 1, GL_FALSE, model.m);
 	glUniform3fv(light_position_location, 1, lightPos.v);
 	glUniform1i(light_location, false);
-	//glBindTexture(GL_TEXTURE_2D, textures[SPDR_BODY_TEX]);
-	insects.draw(model, matrix_location, texture_number_loc);
-	//glUniform1i(light_location, true);
-	//cube.draw(cubeTransform, identity_mat4(), matrix_location, texture_number_loc);
-	//glUniform1i(light_location, false);
+	
+	glUniform1i(light_location, true);
+	trees.draw(treesTransform, identity_mat4(), matrix_location, texture_number_loc);
+	glUniform1i(light_location, false);
 
+	insects.draw(model, matrix_location, texture_number_loc);
 	house.draw(identity_mat4(), matrix_location, texture_number_loc);
-	//ground.draw(groundTransformation, identity_mat4(), matrix_location, textures[SPDR_BODY_TEX]);
-	//door.draw(doorTransformation, identity_mat4(), matrix_location, textures[SPDR_BODY_TEX]);
-	//lantern.draw(lanternTransformation, identity_mat4(), matrix_location, texture_number_loc);
 	lantern.draw(lanternTransformation, matrix_location, texture_number_loc, light_location);
 
 	glutSwapBuffers();
@@ -299,54 +274,22 @@ void init()
 {
 	// Set up the shaders
 	GLuint shaderProgramID = CompileShaders();
+	trees = Model(Model::loadScene("Models/tree_tex.obj"), TREE_TEX);
 
 	insects = Spoids(MESH_NAME);
-	house = House("Models/house_full.obj");
-	//house = Model(Model::loadScene("Models/house_full.obj"));
+	house = House("Models/house_full_subdivides.obj");
 	lantern = Lantern("Models/lantern.obj");
-	cube = Model(Model::loadScene("Models/cube.obj"), FIRE_TEX);
+	
 
 	insects.generateObjectBufferMesh(shaderProgramID);
 	house.generateObjectBufferMesh(shaderProgramID);
 	lantern.generateObjectBufferMesh(shaderProgramID);
-	cube.generateObjectBufferMesh(shaderProgramID);
+	trees.generateObjectBufferMesh(shaderProgramID);
 
 	loadAllTextures(shaderProgramID);
-
-
-	//Calculate texture matrix for projection
-////This matrix takes us from eye space to the light's clip space
-////It is postmultiplied by the inverse of the current view matrix when specifying texgen
-//
-//	biasMatrix = mat4(0.5f, 0.0f, 0.0f, 0.0f,
-//		0.0f, 0.5f, 0.0f, 0.0f,
-//		0.0f, 0.0f, 0.5f, 0.0f,
-//		0.5f, 0.5f, 0.5f, 1.0f);
-//
-//	textureMatrix = biasMatrix * lightProjectionMatrix*lightViewMatrix;
-//
-//	//Set up texture coordinate generation.
-//	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-//	glTexGenfv(GL_S, GL_EYE_PLANE, textureMatrix.GetRow(0));
-//	glEnable(GL_TEXTURE_GEN_S);
-//
-//	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-//	glTexGenfv(GL_T, GL_EYE_PLANE, textureMatrix.GetRow(1));
-//	glEnable(GL_TEXTURE_GEN_T);
-//
-//	glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-//	glTexGenfv(GL_R, GL_EYE_PLANE, textureMatrix.GetRow(2));
-//	glEnable(GL_TEXTURE_GEN_R);
-//
-//	glTexGeni(GL_Q, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-//	glTexGenfv(GL_Q, GL_EYE_PLANE, textureMatrix.GetRow(3));
-//	glEnable(GL_TEXTURE_GEN_Q);
-//
 }
 
-// Placeholder code for the keypress
 void keypress(unsigned char key, int x, int y) {
-	//insects.keypress(key, x, y);
 	switch (key) {
 	case 'd':
 		rotate_view_z += 5.0f;
