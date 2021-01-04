@@ -128,7 +128,7 @@ void Insect::update(float delta, std::vector<point> fellowsPos, int numFellows) 
 		direction += normalise(avoidFellows(fellowsPos[i].x, fellowsPos[i].y));
 	}
 	direction = normalise(direction);
-	vec3 newDir = normalise((vec3(cos(dir), sin(dir), 0.0f) * 9 ) + direction);
+	vec3 newDir = normalise((vec3(cos(dir), sin(dir), 0.0f) * 5 ) + direction);
 	dir = glm::atan(newDir.v[1], newDir.v[0]);
 
 	y += sin((dir)) * speed * delta;

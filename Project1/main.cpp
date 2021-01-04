@@ -50,8 +50,8 @@ House house = House();
 Lantern lantern;
 Model trees, cube;
 unsigned int mesh_vao = 0;
-int width = 800;
-int height = 600;
+int width = 1200;
+int height = 800;
 
 GLfloat rotate_y = 0.0f;
 GLfloat rotate_view_x = -90.0f, rotate_view_z = 0.0f;

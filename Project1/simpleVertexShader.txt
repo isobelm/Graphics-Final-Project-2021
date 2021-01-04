@@ -22,7 +22,7 @@ vec3 windowLight1Pos = vec3(-11.5, -6.1f, 2.1);
 vec3 windowLight2Pos = vec3(-7.7, 18.4, 2.1);
 vec3 windowLight3Pos = vec3(8.3, 18.5, 2.1);
 light_data fireLight;// Light source intensity
-vec3 ambientLight = vec3(0.5, 0.04, 0.075); // ambient source intensity
+vec3 ambientLight = vec3(0.005, 0.005, 0.008); // ambient source intensity
 
 
 uniform mat4 view;
@@ -46,7 +46,7 @@ vec3 calcIntensity(vec3 tnorm, vec3 lightPos, light_data light_data_obj, vec4 ey
 
 	// The diffuse shading equation, dot product gives us the cosine of angle between the vectors
 	//LightIntensity = Ld * Kd * max( dot( s, tnorm ), 0.0 );
-	return light_data_obj.colour * ((max(dot(s, tnorm), 0.0) * attenuation + spec * attenuation));
+	return light_data_obj.colour * ((max(dot(s, tnorm), 0.0) * attenuation + spec * attenuation) + ambientLight);
 }
 
 void main() {

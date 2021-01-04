@@ -49,8 +49,6 @@
   <ItemGroup>
     <Text Include="simpleFragmentShader.txt" />
     <Text Include="simpleVertexShader.txt" />
-    <Text Include="shadowVertexShader.txt" />
-    <Text Include="shadowFragmentShader.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="maths_funcs.h">

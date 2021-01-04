@@ -135,8 +135,6 @@
     <ClCompile Include="textures.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="shadowFragmentShader.txt" />
-    <Text Include="shadowVertexShader.txt" />
     <Text Include="simpleFragmentShader.txt" />
     <Text Include="simpleVertexShader.txt" />
   </ItemGroup>
